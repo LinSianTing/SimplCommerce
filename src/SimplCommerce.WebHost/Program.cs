@@ -35,6 +35,7 @@ namespace SimplCommerce.WebHost
                        .ReadFrom.Configuration(configuration)
                        .CreateLogger();
         }
+
         private static void SetupLogging(WebHostBuilderContext hostingContext, ILoggingBuilder loggingBuilder)
         {
             loggingBuilder.AddSerilog();
