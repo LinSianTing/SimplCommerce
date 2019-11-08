@@ -29,6 +29,7 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
         [HttpGet("/")]
         public IActionResult Index()
         {
+            // CodeNote : 首先進入controller，接下來指定要運行的ViewModel，最後透過 Return View(); 把 前後端整合。
             var model = new HomeViewModel();
 
             model.WidgetInstances = _widgetInstanceService.GetPublished()

@@ -56,26 +56,39 @@ namespace SimplCommerce.WebHost
             });
 
             // 資料庫 DataStore
+            // services.AddDbContextPool<SimplDbContext>  --  DbContext
             services.AddCustomizedDataStore(_configuration);
 
             services.AddCustomizedIdentity(_configuration);
+
             services.AddHttpClient();
 
+            #region Repository
+
+            // 資料控制器 實體 Repository
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient(typeof(IRepositoryWithTypedId<,>), typeof(RepositoryWithTypedId<,>));
+
+            #endregion
+
             services.AddScoped<SlugRouteValueTransformer>();
 
             services.AddCustomizedLocalization();
 
             services.AddCustomizedMvc(GlobalConfiguration.Modules);
-            services.Configure<RazorViewEngineOptions>(
-                options => { options.ViewLocationExpanders.Add(new ThemeableViewLocationExpander()); });
+
+            // 樣板服務註冊 - Themea - ThemeableViewLocationExpander
+            services.Configure<RazorViewEngineOptions>(options => { options.ViewLocationExpanders.Add(new ThemeableViewLocationExpander()); });
+
             services.Configure<WebEncoderOptions>(options =>
             {
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
             });
             services.AddScoped<ITagHelperComponent, LanguageDirectionTagHelperComponent>();
+
+            // Razor View 前端整合, Theme
             services.AddTransient<IRazorViewRenderer, RazorViewRenderer>();
+
             services.AddAntiforgery(options => options.HeaderName = "X-XSRF-Token");
             services.AddCloudscribePagination();
 
@@ -102,6 +115,14 @@ namespace SimplCommerce.WebHost
 
                     // 對於實體化後的物件，進行 Configure
                     moduleInitializer.ConfigureServices(services);
+
+                    /*
+                 Note : 
+                        public class ModuleInitializer : IModuleInitializer
+                        {
+                            public void ConfigureServices(IServiceCollection serviceCollection)
+                            {
+                 */
                 }
             }
 
