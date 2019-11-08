@@ -1,4 +1,4 @@
-/*  angular-summernote v0.8.1 | (c) 2016 JeongHoon Byun | MIT license */
+﻿/*  angular-summernote v0.8.1 | (c) 2016 JeongHoon Byun | MIT license */
 /* global angular */
 angular.module('summernote', [])
 
@@ -100,8 +100,9 @@ angular.module('summernote', [])
           (!summernoteConfig.airMode) && element.blur();
           $scope.blur({evt: evt});
         };
-      }
-      element.summernote(summernoteConfig);
+        }
+        summernoteConfig.lang = 'zh-TW'; //20191106 LinSianTing added , // default: 'en-US'
+        element.summernote(summernoteConfig);
 
       var editor$ = element.next('.note-editor'),
           unwatchNgModel;
