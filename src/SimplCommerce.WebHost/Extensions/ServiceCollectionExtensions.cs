@@ -56,7 +56,8 @@ namespace SimplCommerce.WebHost.Extensions
                     module.IsBundledWithHost = moduleMetadata.isBundledWithHost;
                 }
 
-                if(!module.IsBundledWithHost)
+                // 如果是被 IsBundled 的，就不可支援動態插拔 AssemblyLoadContext，需使用Assembly.Load. # 在記憶體回收機制上有差異
+                if (!module.IsBundledWithHost)
                 {
                     TryLoadModuleAssembly(moduleFolder.FullName, module);
                     if (module.Assembly == null)
@@ -236,6 +237,7 @@ namespace SimplCommerce.WebHost.Extensions
 
         public static IServiceCollection AddCustomizedDataStore(this IServiceCollection services, IConfiguration configuration)
         {
+            // SimplDbContext - D:\CodingWork\Projects\NongMinGoProject\SimplCommerce\src\Modules\SimplCommerce.Module.Core\Data\SimplDbContext.cs
             services.AddDbContextPool<SimplDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly("SimplCommerce.WebHost")));

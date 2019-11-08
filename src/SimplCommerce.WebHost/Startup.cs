@@ -40,6 +40,12 @@ namespace SimplCommerce.WebHost
         {
             GlobalConfiguration.WebRootPath = _hostingEnvironment.WebRootPath;
             GlobalConfiguration.ContentRootPath = _hostingEnvironment.ContentRootPath;
+
+            /*During the application startup, the host will scan for all the *.dll in the Modules folder and load them up using AssemblyLoadContext. 
+             * These assemblies will be then registered to MVC Core by the AddApplicationPart method.*/
+            /*
+            assemblies 讀取，讀進程序中，尚未實體化 
+            */
             services.AddModules(_hostingEnvironment.ContentRootPath);
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -48,9 +54,13 @@ namespace SimplCommerce.WebHost
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            // 資料庫 DataStore
             services.AddCustomizedDataStore(_configuration);
+
             services.AddCustomizedIdentity(_configuration);
             services.AddHttpClient();
+
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient(typeof(IRepositoryWithTypedId<,>), typeof(RepositoryWithTypedId<,>));
             services.AddScoped<SlugRouteValueTransformer>();
@@ -69,17 +79,33 @@ namespace SimplCommerce.WebHost
             services.AddAntiforgery(options => options.HeaderName = "X-XSRF-Token");
             services.AddCloudscribePagination();
 
-            foreach(var module in GlobalConfiguration.Modules)
+            #region 這裡進行 Modules 的 載入與準備
+            /*
+             這裡才是真正的 assemblies 實體化
+                A. Scoped	1	Specifies that a new instance of the service will be created for each scope.
+                B. Singleton	0	Specifies that a single instance of the service will be created.
+                C. Transient	2	Specifies that a new instance of the service will be created every time it is requested.
+             */
+            foreach (var module in GlobalConfiguration.Modules)
             {
                 var moduleInitializerType = module.Assembly.GetTypes()
                    .FirstOrDefault(t => typeof(IModuleInitializer).IsAssignableFrom(t));
                 if ((moduleInitializerType != null) && (moduleInitializerType != typeof(IModuleInitializer)))
                 {
+                    /*
+                     System.Activator
+                     */
                     var moduleInitializer = (IModuleInitializer)Activator.CreateInstance(moduleInitializerType);
+
+                    // Microsoft.Extensions.DependencyInjection.ServiceLifetime提供了三種類型 , 實體化
                     services.AddSingleton(typeof(IModuleInitializer), moduleInitializer);
+
+                    // 對於實體化後的物件，進行 Configure
                     moduleInitializer.ConfigureServices(services);
                 }
             }
+
+            #endregion
 
             services.AddScoped<ServiceFactory>(p => p.GetService);
             services.AddScoped<IMediator, Mediator>();

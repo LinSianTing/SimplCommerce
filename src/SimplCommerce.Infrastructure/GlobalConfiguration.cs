@@ -4,6 +4,9 @@ using SimplCommerce.Infrastructure.Modules;
 
 namespace SimplCommerce.Infrastructure
 {
+    /// <summary>
+    /// Global 靜態物件，維護 全域的 Configuration 效果與特質
+    /// </summary>
     public static class GlobalConfiguration
     {
         public static IList<ModuleInfo> Modules { get; set; } = new List<ModuleInfo>();

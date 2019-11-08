@@ -105,6 +105,11 @@ namespace SimplCommerce.Module.Core.Data
             }
         }
 
+        /// <summary>
+        /// Every domain entity needs to inherit from Entity, then on the "OnModelCreating" method, we find them and register them to the DbContext:
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        /// <param name="typeToRegisters"></param>
         private static void RegisterEntities(ModelBuilder modelBuilder, IEnumerable<Type> typeToRegisters)
         {
             var entityTypes = typeToRegisters.Where(x => x.GetTypeInfo().IsSubclassOf(typeof(EntityBase)) && !x.GetTypeInfo().IsAbstract);
