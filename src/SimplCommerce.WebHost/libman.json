@@ -165,13 +165,13 @@
             "provider": "cdnjs",
             "library": "bootstrap-star-rating@4.0.2",
             "destination": "wwwroot/lib/bootstrap-star-rating",
-            "files": [
-                "css/star-rating.css",
-                "css/star-rating.min.css",
-                "img/loading.gif",
-                "js/star-rating.js",
-                "js/star-rating.min.js"
-            ]
+          "files": [
+            "css/star-rating.css",
+            "css/star-rating.min.css",
+            "img/loading.gif",
+            "js/star-rating.js",
+            "js/star-rating.min.js"
+          ]
         },
         {
             "provider": "cdnjs",

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Super simple wysiwyg editor v0.8.2
  * http://summernote.org/
  *

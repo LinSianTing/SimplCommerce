@@ -4,6 +4,7 @@
     <TaskFolder Condition=" '$(MSBuildRuntimeType)' == 'Core' ">netcoreapp2.0</TaskFolder>
     <TaskFolder Condition=" '$(MSBuildRuntimeType)' != 'Core' ">net46</TaskFolder>
   </PropertyGroup>
+  
   <UsingTask AssemblyFile="..\..\build\$(TaskFolder)\SimplCommerce.MSBuildTasks.dll" TaskName="CopyModuleTask" />
 
   <PropertyGroup>
@@ -18,6 +19,12 @@
     <Content Include="wwwroot\**\*;modules.json;appsettings.json;Modules\**\*;Themes\**\*;Views\**\*">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Themes\NongMinGo\theme.json" />
+    <None Remove="wwwroot\themes\NongMinGo\NongMinGo.png" />
+    <None Remove="wwwroot\themes\NongMinGo\site.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -82,4 +89,6 @@
   <Target Name="CopyModule" AfterTargets="Build">
     <CopyModuleTask ProjectDir="$(ProjectDir)" TargetFramework="netcoreapp3.0" BuildConfiguration="$(ConfigurationName)" />
   </Target>
+
+  <ProjectExtensions><VisualStudio><UserProperties libman_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>
