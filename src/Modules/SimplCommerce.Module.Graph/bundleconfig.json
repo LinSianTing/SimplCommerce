@@ -1,0 +1,13 @@
+[
+  {
+    "outputFileName": "wwwroot/graph.min.js",
+    "inputFiles": [
+      "wwwroot/graph.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  }
+]

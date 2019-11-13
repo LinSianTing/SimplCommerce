@@ -1,0 +1,11 @@
+﻿@inject IViewLocalizer Localizer
+
+<div class="row">
+    @foreach (var group in Model.Groups)
+    {
+        <div class="col-md-2">
+            <a class="btn btn-outline-success mt-1 btn-block btn-lg" href="/">@Localizer[group]<i class="czi-arrow-right"></i></a>
+        </div>
+    }
+</div>
+

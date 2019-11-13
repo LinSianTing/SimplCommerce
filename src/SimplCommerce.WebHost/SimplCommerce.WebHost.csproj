@@ -23,6 +23,9 @@
 
   <ItemGroup>
     <None Remove="Themes\NongMinGo\theme.json" />
+    <None Remove="wwwroot\lib\d3\d3.layout.js" />
+    <None Remove="wwwroot\lib\d3\d3.v2.js" />
+    <None Remove="wwwroot\lib\d3\d3v4.js" />
     <None Remove="wwwroot\themes\NongMinGo\NongMinGo.png" />
     <None Remove="wwwroot\themes\NongMinGo\site.css" />
   </ItemGroup>
@@ -34,8 +37,11 @@
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Comments\SimplCommerce.Module.Comments.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Contacts\SimplCommerce.Module.Contacts.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.DinkToPdf\SimplCommerce.Module.DinkToPdf.csproj" />
+    <ProjectReference Include="..\Modules\SimplCommerce.Module.Graph\SimplCommerce.Module.Graph.csproj" />
+    <ProjectReference Include="..\Modules\SimplCommerce.Module.Groups\SimplCommerce.Module.Groups.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Inventory\SimplCommerce.Module.Inventory.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.News\SimplCommerce.Module.News.csproj" />
+    <ProjectReference Include="..\Modules\SimplCommerce.Module.NongMinGo\SimplCommerce.Module.NongMinGo.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Orders\SimplCommerce.Module.Orders.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.PaymentBraintree\SimplCommerce.Module.PaymentBraintree.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.PaymentCashfree\SimplCommerce.Module.PaymentCashfree.csproj" />

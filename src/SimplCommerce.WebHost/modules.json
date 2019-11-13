@@ -144,7 +144,15 @@
     "version": "1.0.0"
   },
   {
-    "id": "SimplCommerce.Module.TestModuleEric01",
+    "id": "SimplCommerce.Module.NongMinGo",
+    "version": "1.0.0"
+  },
+  {
+    "id": "SimplCommerce.Module.Groups",
+    "version": "1.0.0"
+  },
+  {
+    "id": "SimplCommerce.Module.Graph",
     "version": "1.0.0"
   }
 ]

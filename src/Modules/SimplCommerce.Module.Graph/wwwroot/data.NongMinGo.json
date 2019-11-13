@@ -1,0 +1,96 @@
+{
+  "nodes": [
+    {
+      "id": "user0001",
+      "name": "ªL¾Ë§Ê",
+      "point": 10,
+      "buy": 0,
+      "sell": 0,
+      "group": "",
+      "color": 1
+    },
+    {
+      "id": "user0002",
+      "name": "³¯¥°¹Å",
+      "buy": 0,
+      "sell": 0,
+      "group": "",
+      "color": 2
+    },
+    {
+      "id": "user0003",
+      "name": "¶Àà±®f",
+      "buy": 0,
+      "group": "",
+      "color": 2
+    },
+    {
+      "id": "user0004",
+      "name": "§º­YºÂ",
+      "buy": 0,
+      "sell": 3,
+      "group": "ºC®q¥Í¬¡",
+      "color": 3
+    },
+    {
+      "id": "user0005",
+      "name": "·¨¤å¥þ",
+      "buy": 0,
+      "sell": 0,
+      "group": "ºC®q¥Í¬¡",
+      "color": 3
+    },
+    {
+      "id": "user0006",
+      "name": "¿à«CªQ",
+      "buy": 20,
+      "sell": 0,
+      "group": "ºC®q¥Í¬¡",
+      "color": 3
+    },
+    {
+      "id": "user0007",
+      "name": "¾G¥°©÷",
+      "buy": 3,
+      "sell": 1,
+      "group": "ºC®q¥Í¬¡",
+      "color": 3
+    },
+    {
+      "id": "user0008",
+      "name": "­J§µ¥þ",
+      "buy": 0,
+      "sell": 6,
+      "group": "",
+      "color": 4
+    }
+  ],
+  "links": [
+    {
+      "source": "user0001",
+      "target": "user0002",
+      "value": 2
+    },
+    {
+      "source": "user0001",
+      "target": "user0003",
+      "value": 2
+    },
+    {
+      "source": "user0002",
+      "target": "user0003",
+      "value": 2
+    },
+    {
+      "source": "user0001",
+      "target": "user0006",
+      "value": 5
+    },
+    {
+      "source": "user0006",
+      "target": "user0004",
+      "value": 7
+    }
+  ]
+}
+

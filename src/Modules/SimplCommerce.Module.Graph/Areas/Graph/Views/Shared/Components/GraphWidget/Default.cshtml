@@ -1,0 +1,115 @@
+﻿@inject IViewLocalizer Localizer
+
+<link simpl-append-version="true" rel="stylesheet" href="~/modules/graph/graph.css" />
+
+<script simpl-append-version="true" src="~/lib/d3/d3.v4.js"></script>
+@*<script simpl-append-version="true" src="~/lib/d3/d3.layout.js"></script>*@
+<script simpl-append-version="true" src="~/lib/d3/webcola/cola.min.js"></script>
+@*<script simpl-append-version="true" src="~/lib/d3/d3.geom.min.js"></script>*@
+
+<script id="graphdata" charset="utf-8" type="application/json">
+    {
+    "nodes": [
+    {
+    "id": "user0001",
+    "name": "林憲廷",
+    "point": 10,
+    "buy": 0,
+    "sell": 0,
+    "group": "",
+    "color": 1
+    },
+    {
+    "id": "user0002",
+    "name": "陳弘嘉",
+    "buy": 0,
+    "sell": 0,
+    "group": "",
+    "color": 2
+    },
+    {
+    "id": "user0003",
+    "name": "黃鈺宸",
+    "buy": 0,
+    "group": "",
+    "color": 2
+    },
+    {
+    "id": "user0004",
+    "name": "宋若甄",
+    "buy": 0,
+    "sell": 3,
+    "group": "慢島生活",
+    "color": 3
+    },
+    {
+    "id": "user0005",
+    "name": "楊文全",
+    "buy": 0,
+    "sell": 0,
+    "group": "慢島生活",
+    "color": 3
+    },
+    {
+    "id": "user0006",
+    "name": "賴青松",
+    "buy": 20,
+    "sell": 0,
+    "group": "慢島生活",
+    "color": 3
+    },
+    {
+    "id": "user0007",
+    "name": "鄭弘昌",
+    "buy": 3,
+    "sell": 1,
+    "group": "慢島生活",
+    "color": 3
+    },
+    {
+    "id": "user0008",
+    "name": "胡孝全",
+    "buy": 0,
+    "sell": 6,
+    "group": "",
+    "color": 4
+    }
+    ],
+    "links": [
+    {
+    "source": "user0001",
+    "target": "user0002",
+    "value": 2
+    },
+    {
+    "source": "user0001",
+    "target": "user0003",
+    "value": 2
+    },
+    {
+    "source": "user0002",
+    "target": "user0003",
+    "value": 2
+    },
+    {
+    "source": "user0001",
+    "target": "user0006",
+    "value": 5
+    },
+    {
+    "source": "user0006",
+    "target": "user0004",
+    "value": 7
+    }
+    ]
+    }
+
+
+</script>
+
+<div class="row">
+    <svg width="960" height="600"></svg>
+</div>
+
+@*LinSianTing Added at 2019.11.11*@
+<script simpl-append-version="true" charset="utf-8" src="~/modules/graph/graph.js"></script>

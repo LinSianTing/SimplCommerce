@@ -46,6 +46,7 @@ namespace SimplCommerce.WebHost
             /*
             assemblies 讀取，讀進程序中，尚未實體化 
             */
+            // 從 const string moduleManifestName = "module.json"; 拆解字串，得知有哪些 modules
             services.AddModules(_hostingEnvironment.ContentRootPath);
 
             services.Configure<CookiePolicyOptions>(options =>

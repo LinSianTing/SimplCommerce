@@ -40,9 +40,12 @@ namespace SimplCommerce.Module.Core.Data
             {
                 typeToRegisters.AddRange(module.Assembly.DefinedTypes.Select(t => t.AsType()));
             }
+            // 取得 掛載的 Assembly
 
+            // 依序找 Assembly 中 Type 有繼承自 EntityBase , 得知其為可為資料實體
             RegisterEntities(modelBuilder, typeToRegisters);
 
+            // Table 資料表名稱 對應關鍵 - RegisterConvention
             RegisterConvention(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
