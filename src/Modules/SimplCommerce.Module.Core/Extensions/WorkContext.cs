@@ -13,7 +13,7 @@ namespace SimplCommerce.Module.Core.Extensions
 {
     public class WorkContext : IWorkContext
     {
-        private const string UserGuidCookiesName = "SimplUserGuid";
+        public const string UserGuidCookiesName = "NongMinGoUserGuid";
         private const long GuestRoleId = 3;
 
         private User _currentUser;
@@ -60,7 +60,7 @@ namespace SimplCommerce.Module.Core.Extensions
             }
 
             userGuid = Guid.NewGuid();
-            var dummyEmail = string.Format("{0}@guest.simplcommerce.com", userGuid);
+            var dummyEmail = string.Format("{0}@guest.nongmingo.com", userGuid);
             _currentUser = new User
             {
                 FullName = "Guest",
@@ -69,7 +69,7 @@ namespace SimplCommerce.Module.Core.Extensions
                 UserName = dummyEmail,
                 Culture = _configuration.GetValue<string>("Global.DefaultCultureUI") ?? GlobalConfiguration.DefaultCulture
             };
-            var abc = await _userManager.CreateAsync(_currentUser, "1qazZAQ!");
+            var abc = await _userManager.CreateAsync(_currentUser, "123456");
             await _userManager.AddToRoleAsync(_currentUser, "guest");
             SetUserGuidCookies(_currentUser.UserGuid);
             return _currentUser;

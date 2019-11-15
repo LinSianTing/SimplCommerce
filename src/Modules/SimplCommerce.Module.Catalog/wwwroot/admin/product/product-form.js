@@ -2,9 +2,9 @@
 (function ($) {
     angular
         .module('simplAdmin.catalog')
-        .controller('ProductFormCtrl', ['$state', '$timeout', '$stateParams', '$http', 'categoryService', 'productService', 'summerNoteService', 'brandService', 'translateService', ProductFormCtrl]);
+        .controller('ProductFormCtrl', ['$state', '$timeout', '$stateParams', 'userService', '$http', 'categoryService', 'productService', 'summerNoteService', 'brandService', 'translateService', ProductFormCtrl]);
 
-    function ProductFormCtrl($state, $timeout, $stateParams, $http, categoryService, productService, summerNoteService, brandService, translateService) {
+    function ProductFormCtrl($state, $timeout, $stateParams, userService, $http, categoryService, productService, summerNoteService, brandService, translateService) {
         var vm = this;
         vm.translate = translateService;
         // declare shoreDescription and description for summernote
@@ -301,7 +301,9 @@
             return !optionValueAdded;
         };
 
-        vm.save = function save() {
+        vm.save = save;
+
+        function save(mode) {
             var promise;
 
             // ng-upload will post null as text
@@ -335,7 +337,12 @@
             }
 
             promise.then(function (result) {
-                    $state.go('product');
+                    if (mode == 'list') {
+                        $state.go('product');
+                    }
+                    else {
+                        window.location.href = '/hall';
+                    }
                 })
                 .catch(function (response) {
                     var error = response.data;
@@ -421,6 +428,14 @@
             });
         }
 
+        function getUser() {
+                userService.getUser(67).then(function (result) {
+                if (result.data) {
+                    vm.user = result.data;
+                }
+            });
+        }
+
         function init() {
             if (vm.isEditMode) {
                 getProduct();
@@ -434,6 +449,8 @@
             getCategories();
             getBrands();
             getTaxClasses();
+
+            getUser();
         }
 
         function getParentCategoryIds(categoryId) {

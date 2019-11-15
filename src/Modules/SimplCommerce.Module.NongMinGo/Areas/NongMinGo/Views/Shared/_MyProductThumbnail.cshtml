@@ -1,0 +1,36 @@
+﻿@model SimplCommerce.Module.Catalog.Areas.Catalog.ViewModels.ProductThumbnail
+
+<div class="card mb-4">
+    <input type="hidden" id="productId" value="@Model.Id" />
+            <img alt="@Model.Name" class="card-img-top" src="@Model.ThumbnailUrl">
+            <div class="card-body">
+                <h5 class="card-title product-name">@Model.Name</h5>
+                <p class="card-text product-price">
+                    @if (Model.IsCallForPricing)
+                    {
+                        @Localizer["Call for pricing"]
+                    }
+                    else
+                    {
+                        @Model.CalculatedProductPrice.PriceString
+                        if (Model.CalculatedProductPrice.PercentOfSaving > 0)
+                        {
+                            <span class="product-price-saving">-@(Model.CalculatedProductPrice.PercentOfSaving)%</span>
+                            <br />
+                            <span class="product-price-regular">@Model.CalculatedProductPrice.OldPriceString</span>
+                        }
+                    }
+                </p>
+                <div class="row">
+                    <div class="col-md-4">
+                        <a class="btn btn-outline-warning mt-1 btn-block btn-lg" href="~/@Model.Slug">@Localizer["User View"]<i class="czi-arrow-right"></i></a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="btn btn-outline-warning mt-1 btn-block btn-lg" href="/admin#!/product/edit/@Model.Id">@Localizer["Edit View"]<i class="czi-arrow-right"></i></a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="btn btn-outline-warning mt-1 btn-block btn-lg" href=/admin#!/product/edit/@Model.Id">@Localizer["Stock"]<i class="czi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+</div>

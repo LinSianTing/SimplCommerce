@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace SimplCommerce.Module.Core.Areas.Core.Controllers
 {
     [Area("Core")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeAdminController : Controller
     {

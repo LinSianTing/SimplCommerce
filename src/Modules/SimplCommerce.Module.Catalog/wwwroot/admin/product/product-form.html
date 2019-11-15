@@ -31,12 +31,25 @@
                             <input name="slug" ng-model="vm.product.slug" class="form-control" />
                         </div>
                     </div>
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label class="col-sm-2 control-label">{{::vm.translate.get('Brand')}}</label>
                         <div class="col-sm-10">
                             <select class="form-control" ng-model="vm.product.brandId" ng-options="brand.id as brand.name for brand in vm.brands"></select>
                         </div>
+                    </div>-->
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">{{::vm.translate.get('Brand')}}</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" ng-model="vm.product.brandId" ng-options="brand.id as brand.name for brand in vm.brands"></select>
                     </div>
+                    <label ng-model="vm.user.id"> tt : </label>
+                    <label> label : {{vm.user.id}}</label>
+                    <input name="userid" ng-model="vm.user.id" class="form-control" />
+
+                    <label ng-if="!vm.isEditMode" ng-model="vm.product.brandId" ng-value="name">{{::vm.translate.get('Create Product')}}</label>
+                    <label ng-if="vm.isEditMode" ng-model="vm.product.brandId" ng-value="name">{{::vm.translate.get('Edit Product')}} {{vm.product.name}}</label>
+                </div>
+
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{::vm.translate.get('Short Description')}}</label>
                         <div class="col-sm-10">
@@ -458,7 +471,8 @@
             </uib-tabset>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <button class="btn btn-primary" ng-disabled="productForm.$invalid" ng-click="vm.save()"><span class="glyphicon glyphicon-ok"></span>{{::vm.translate.get('Save')}}</button>
+                    <button class="btn btn-primary" ng-disabled="productForm.$invalid" ng-click="vm.save('goback')"><span class="glyphicon glyphicon-ok"></span>{{::vm.translate.get('Save')}}</button>
+                    <button class="btn btn-primary" ng-disabled="productForm.$invalid" ng-click="vm.save('list')"><span class="glyphicon glyphicon-ok"></span>{{::vm.translate.get('Save and go back to list')}}</button>
                     <button ui-sref="product" class="btn btn-default">{{::vm.translate.get('Cancel')}}</button>
                 </div>
             </div>

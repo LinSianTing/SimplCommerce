@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using SimplCommerce.Infrastructure.Data;
+using SimplCommerce.Module.Catalog.Models;
+using SimplCommerce.Module.Catalog.Services;
 using SimplCommerce.Module.Core.Areas.Core.ViewModels.Account;
 using SimplCommerce.Module.Core.Models;
 using SimplCommerce.Module.Core.Services;
@@ -22,19 +26,26 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
+        private readonly IRepository<Brand> _brandRepository;
+        private readonly IBrandService _brandService;
 
         public AccountController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            IRepository<Brand> brandRepository,
+            IBrandService brandService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
+
+            _brandRepository = brandRepository;
+            _brandService = brandService;
         }
 
         //
@@ -61,6 +72,20 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+
+
+                //#region LinSianTing20191115-Bug處理，Cookie清不乾淨
+                //// SignOutAsync : 似乎運作不正常，不能正常清除Cookie
+                //foreach (var cookie in Request.Cookies.Keys)
+                //{
+                //    if (cookie == SimplCommerce.Module.Core.Extensions.WorkContext.UserGuidCookiesName)
+                //    {
+                //        Response.Cookies.Delete(cookie);
+                //    }
+                //}
+                //#endregion
+
+
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
@@ -109,7 +134,7 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = model.Email, Email = model.Email, FullName = model.FullName };
+                var user = new User { UserName = model.Email, UserGuid = Guid.NewGuid(), Email = model.Email, FullName = model.FullName };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -120,6 +145,22 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
                     //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                     //    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
                     await _userManager.AddToRoleAsync(user, "customer");
+
+                    #region LinSianTing : 20191113新增-註冊帳戶同時新增該人的Brand
+
+                    user = await _userManager.FindByEmailAsync(model.Email);
+
+                    var brand = new Brand
+                    {
+                        Id = user.Id,
+                        Name = user.FullName,
+                        Slug = model.FullName.ToLower().Replace(" ", string.Empty).Trim(),
+                        IsPublished = true
+                    };
+
+                    await _brandService.Create(brand);
+
+                    #endregion
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");
@@ -140,6 +181,16 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
+            //#region LinSianTing20191115-Bug處理，Cookie清不乾淨
+            //// SignOutAsync : 似乎運作不正常，不能正常清除Cookie
+            //foreach (var cookie in Request.Cookies.Keys)
+            //{
+            //    if(cookie == SimplCommerce.Module.Core.Extensions.WorkContext.UserGuidCookiesName)
+            //    {
+            //        Response.Cookies.Delete(cookie);
+            //    }
+            //}
+            //#endregion
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
@@ -214,11 +265,27 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new User { UserName = model.Email, Email = model.Email, FullName = model.FullName };
+                var user = new User { UserName = model.Email, UserGuid = Guid.NewGuid(), Email = model.Email, FullName = model.FullName };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "customer");
+
+                    #region LinSianTing : 20191113新增-註冊帳戶同時新增該人的Brand
+
+                    user = await _userManager.FindByEmailAsync(model.Email);
+
+                    var brand = new Brand
+                    {
+                        Id = user.Id,
+                        Name = user.FullName,
+                        Slug = model.FullName.ToLower().Replace(" ", string.Empty).Trim(),
+                        IsPublished = true
+                    };
+
+                    await _brandService.Create(brand);
+
+                    #endregion
 
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
@@ -451,7 +518,7 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
             return View();
         }
 
-       #region Helpers
+        #region Helpers
 
         private void AddErrors(IdentityResult result)
         {

@@ -13,6 +13,8 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <Authors>NongMinGo</Authors>
+    <Product>NongMinGo</Product>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,6 +37,7 @@
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Catalog\SimplCommerce.Module.Catalog.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Cms\SimplCommerce.Module.Cms.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Comments\SimplCommerce.Module.Comments.csproj" />
+    <ProjectReference Include="..\Modules\SimplCommerce.Module.Connection\SimplCommerce.Module.Connection.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Contacts\SimplCommerce.Module.Contacts.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.DinkToPdf\SimplCommerce.Module.DinkToPdf.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Graph\SimplCommerce.Module.Graph.csproj" />
@@ -54,6 +57,7 @@
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Pricing\SimplCommerce.Module.Pricing.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.ProductComparison\SimplCommerce.Module.ProductComparison.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.ProductRecentlyViewed\SimplCommerce.Module.ProductRecentlyViewed.csproj" />
+    <ProjectReference Include="..\Modules\SimplCommerce.Module.PurchaseForm\SimplCommerce.Module.PurchaseForm.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Reviews\SimplCommerce.Module.Reviews.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.SampleData\SimplCommerce.Module.SampleData.csproj" />
     <ProjectReference Include="..\Modules\SimplCommerce.Module.Search\SimplCommerce.Module.Search.csproj" />
@@ -90,6 +94,10 @@
     <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.1-dev-00767" />
     <PackageReference Include="MediatR" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\public\images\products\" />
   </ItemGroup>
 
   <Target Name="CopyModule" AfterTargets="Build">

@@ -1,0 +1,6 @@
+{
+  "id": "SimplCommerce.Module.Connection",
+  "Name": "Connection",
+  "isBundledWithHost": true,
+  "version": "1.0.0"
+}
