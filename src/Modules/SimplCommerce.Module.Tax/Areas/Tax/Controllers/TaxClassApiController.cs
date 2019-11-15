@@ -11,7 +11,7 @@ using SimplCommerce.Module.Tax.Models;
 namespace SimplCommerce.Module.Tax.Areas.Tax.Controllers
 {
     [Area("Tax")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin, farmer")]
     [Route("api/tax-classes")]
     public class TaxClassApiController : Controller
     {

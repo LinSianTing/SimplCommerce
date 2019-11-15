@@ -11,6 +11,7 @@ using SimplCommerce.Module.Catalog.Models;
 using SimplCommerce.Module.Catalog.Services;
 using SimplCommerce.Module.Core.Areas.Core.ViewModels;
 using SimplCommerce.Module.Core.Events;
+using SimplCommerce.Module.Core.Extensions;
 using SimplCommerce.Module.Core.Services;
 
 namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
@@ -24,18 +25,21 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
         private readonly IMediator _mediator;
         private readonly IProductPricingService _productPricingService;
         private readonly IContentLocalizationService _contentLocalizationService;
+        private readonly IWorkContext _workContext;
 
         public ProductController(IRepository<Product> productRepository,
             IMediaService mediaService,
             IMediator mediator,
             IProductPricingService productPricingService,
-            IContentLocalizationService contentLocalizationService)
+            IContentLocalizationService contentLocalizationService,
+            IWorkContext workContext)
         {
             _productRepository = productRepository;
             _mediaService = mediaService;
             _mediator = mediator;
             _productPricingService = productPricingService;
             _contentLocalizationService = contentLocalizationService;
+            _workContext = workContext;
         }
 
         [HttpGet("product/product-overview")]
@@ -84,8 +88,14 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
                 .Include(x => x.ThumbnailImage)
                 .Include(x => x.Medias).ThenInclude(m => m.Media)
                 .Include(x => x.Brand)
-                .FirstOrDefault(x => x.Id == id && x.IsPublished);
+                .FirstOrDefault(x => x.Id == id);
+
+            var currentUser = await _workContext.GetCurrentUser();
             if (product == null)
+            {
+                return NotFound();
+            }
+            else if (!product.IsPublished && product.BrandId != currentUser.Id)
             {
                 return NotFound();
             }
@@ -109,7 +119,9 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
                 ReviewsCount = product.ReviewsCount,
                 RatingAverage = product.RatingAverage,
                 Attributes = product.AttributeValues.Select(x => new ProductDetailAttribute { Name = x.Attribute.Name, Value = x.Value }).ToList(),
-                Categories = product.Categories.Select(x => new ProductDetailCategory { Id = x.CategoryId, Name = x.Category.Name, Slug = x.Category.Slug }).ToList()
+                Categories = product.Categories.Select(x => new ProductDetailCategory { Id = x.CategoryId, Name = x.Category.Name, Slug = x.Category.Slug }).ToList(),
+                IsPublished = product.IsPublished,
+                ViewMode = product.BrandId == currentUser.Id ? "Owner" : "Customer"
             };
 
             MapProductVariantToProductVm(product, model);
@@ -149,7 +161,7 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
 
         private void MapProductVariantToProductVm(Product product, ProductDetail model)
         {
-            if(!product.ProductLinks.Any(x => x.LinkType == ProductLinkType.Super))
+            if (!product.ProductLinks.Any(x => x.LinkType == ProductLinkType.Super))
             {
                 return;
             }

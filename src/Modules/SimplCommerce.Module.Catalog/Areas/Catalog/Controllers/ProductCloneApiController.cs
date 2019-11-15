@@ -15,7 +15,7 @@ using SimplCommerce.Module.Core.Services;
 namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
 {
     [Area("Catalog")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/product-clone")]
     public class ProductCloneApiController : Controller
     {

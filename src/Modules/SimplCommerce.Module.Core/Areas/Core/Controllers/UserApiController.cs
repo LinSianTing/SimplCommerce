@@ -8,22 +8,25 @@ using Microsoft.EntityFrameworkCore;
 using SimplCommerce.Infrastructure.Data;
 using SimplCommerce.Infrastructure.Web.SmartTable;
 using SimplCommerce.Module.Core.Areas.Core.ViewModels;
+using SimplCommerce.Module.Core.Extensions;
 using SimplCommerce.Module.Core.Models;
 
 namespace SimplCommerce.Module.Core.Areas.Core.Controllers
 {
     [Area("Core")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin, farmer")]
     [Route("api/users")]
     public class UserApiController : Controller
     {
         private readonly IRepository<User> _userRepository;
         private readonly UserManager<User> _userManager;
+        private readonly IWorkContext _workContext;
 
-        public UserApiController(IRepository<User> userRepository, UserManager<User> userManager)
+        public UserApiController(IRepository<User> userRepository, UserManager<User> userManager, IWorkContext workContext)
         {
             _userRepository = userRepository;
             _userManager = userManager;
+            _workContext = workContext;
         }
 
         [HttpGet("quick-search")]
@@ -120,17 +123,41 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
             return Json(users);
         }
 
+        public async Task<IActionResult> Get()
+        {
+            var result = await GetUser(null);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Json(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var user = await _userRepository.Query()
+            var result = await GetUser(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Json(result);
+        }
+
+        private async Task<UserForm> GetUser(long? id)
+        {
+            User user = null;
+
+            if (id != null)
+            {
+                user = await _userRepository.Query()
                 .Include(x => x.Roles)
                 .Include(x => x.CustomerGroups)
                 .FirstOrDefaultAsync(x => x.Id == id);
-
-            if(user == null)
+            }
+            else
             {
-                return NotFound();
+                user = await _workContext.GetCurrentUser();
             }
 
             var model = new UserForm
@@ -144,8 +171,11 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
                 CustomerGroupIds = user.CustomerGroups.Select(x => x.CustomerGroupId).ToList()
             };
 
-            return Json(model);
+            return model;
         }
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] UserForm model)

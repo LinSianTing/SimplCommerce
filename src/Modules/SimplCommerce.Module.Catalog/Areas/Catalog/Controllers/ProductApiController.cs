@@ -22,7 +22,7 @@ using SimplCommerce.Module.Core.Services;
 namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
 {
     [Area("Catalog")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/products")]
     public class ProductApiController : Controller
     {
@@ -214,9 +214,15 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
         {
             var query = _productRepository.Query().Where(x => !x.IsDeleted);
             var currentUser = await _workContext.GetCurrentUser();
-            if (!User.IsInRole("admin"))
+
+            //if (!User.IsInRole("admin"))
+            //{
+            //    query = query.Where(x => x.VendorId == currentUser.VendorId);
+            //}
+
+            if (User.IsInRole("farmer"))
             {
-                query = query.Where(x => x.VendorId == currentUser.VendorId);
+                query = query.Where(x => x.BrandId == currentUser.Id);
             }
 
             if (param.Search.PredicateObject != null)

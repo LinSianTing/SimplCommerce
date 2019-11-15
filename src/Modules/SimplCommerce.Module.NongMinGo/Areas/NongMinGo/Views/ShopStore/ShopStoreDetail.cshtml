@@ -1,0 +1,20 @@
+﻿@model SimplCommerce.Module.NongMinGo.Areas.NongMinGo.ViewModels.ShopStoreViewModel
+
+@{
+    ViewBag.Title = Localizer["ShopStore"];
+}
+
+@*<partial name="_WidgetInstances" model="Model.WidgetInstances.Where(x => x.WidgetZoneId == WidgetZoneIds.HomeFeatured)" />*@
+
+@{
+    if (Model.ShopStoreId != null)
+    {
+        <partial name="_WidgetInstances" model="Model.WidgetInstances.Where(x => x.WidgetZoneId == WidgetZoneIds.ProductMainContent)" />
+    }
+    else
+    {
+        <partial name="_WidgetInstances" model="Model.WidgetInstances.Where(x => x.WidgetZoneId == WidgetZoneIds.ProductMainContent)" />
+    }
+}
+
+@await Component.InvokeAsync("Connection")

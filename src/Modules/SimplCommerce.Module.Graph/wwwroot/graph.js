@@ -60,7 +60,13 @@ function draw(data) {
         })
         .attr('x', 6)
         .attr('y', 3)
-        .on("click", function (d) { alert(d.name)});
+        .on("click", function (d) {
+            //alert(d.name)
+            window.open(
+                '/un/' + d.name,
+                '_blank' // <- This is what makes it open in a new window.
+            );
+        });
 
     node.append("title")
         .text(function (d) { return d.name; });

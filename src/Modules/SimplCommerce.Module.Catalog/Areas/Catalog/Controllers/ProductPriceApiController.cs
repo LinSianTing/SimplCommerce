@@ -12,7 +12,7 @@ using SimplCommerce.Module.Core.Extensions;
 namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
 {
     [Area("Catalog")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/product-prices")]
     public class ProductPriceApiController : Controller
     {

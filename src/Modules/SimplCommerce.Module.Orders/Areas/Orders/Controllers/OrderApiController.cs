@@ -18,7 +18,7 @@ using SimplCommerce.Module.Orders.Models;
 namespace SimplCommerce.Module.Orders.Areas.Orders.Controllers
 {
     [Area("Orders")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/orders")]
     public class OrderApiController : Controller
     {
@@ -51,6 +51,7 @@ namespace SimplCommerce.Module.Orders.Areas.Orders.Controllers
             }
 
             var currentUser = await _workContext.GetCurrentUser();
+
             if (!User.IsInRole("admin"))
             {
                 query = query.Where(x => x.VendorId == currentUser.VendorId);

@@ -23,6 +23,11 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.ViewModels
 
         public bool IsAllowToOrder { get; set; }
 
+        /// <summary>
+        /// 是否已經發布
+        /// </summary>
+        public bool IsPublished { get; set; }
+
         public int? StockQuantity { get; set; }
 
         public DateTimeOffset? SpecialPriceStart { get; set; }
@@ -56,7 +61,8 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.ViewModels
                 IsCallForPricing = product.IsCallForPricing,
                 ThumbnailImage = product.ThumbnailImage,
                 ReviewsCount = product.ReviewsCount,
-                RatingAverage = product.RatingAverage
+                RatingAverage = product.RatingAverage,
+                IsPublished = product.IsPublished
             };
 
             return productThumbnail;

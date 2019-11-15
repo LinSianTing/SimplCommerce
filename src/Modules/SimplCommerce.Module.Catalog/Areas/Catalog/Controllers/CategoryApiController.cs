@@ -18,7 +18,7 @@ using SimplCommerce.Module.Core.Services;
 namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
 {
     [Area("Catalog")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/categories")]
     public class CategoryApiController : Controller
     {

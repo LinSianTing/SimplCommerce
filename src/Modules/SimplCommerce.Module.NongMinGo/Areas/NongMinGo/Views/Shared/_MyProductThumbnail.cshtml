@@ -22,14 +22,32 @@
                     }
                 </p>
                 <div class="row">
-                    <div class="col-md-4">
-                        <a class="btn btn-outline-warning mt-1 btn-block btn-lg" href="~/@Model.Slug">@Localizer["User View"]<i class="czi-arrow-right"></i></a>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header" id="cardBrandHeader">
+                                <h5 class="mb-0">
+                                    @Localizer["ProductManagementDetail"]
+                                </h5>
+                            </div>
+                            <div class="show">
+                                <div class="card-body" style='background-color: @(Model.IsPublished ? "lightgreen" : "lightgoldenrodyellow")'>
+                                    @(Model.IsPublished ? Localizer["This product is already been published"] : Localizer["This product is not yet been published"])
+                                    <br />
+                                    @Localizer["Reviews"]@Localizer["Count"] : @Model.ReviewsCount
+                                    <br />
+                                    @Localizer["Stock"]@Localizer["Quantity"] : @Model.StockQuantity
+                                    <br />
+                                    @Localizer["IsAllowToOrder"] : @(Model.IsAllowToOrder ? "Yes" : "No")
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <a class="btn btn-outline-warning mt-1 btn-block btn-lg" href="/admin#!/product/edit/@Model.Id">@Localizer["Edit View"]<i class="czi-arrow-right"></i></a>
-                    </div>
-                    <div class="col-md-4">
-                        <a class="btn btn-outline-warning mt-1 btn-block btn-lg" href=/admin#!/product/edit/@Model.Id">@Localizer["Stock"]<i class="czi-arrow-right"></i></a>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <a class="btn btn-outline-success mt-1" href="~/@Model.Slug">@Localizer["User View"]<i class="czi-arrow-right"></i></a>
+                        <a class="btn btn-outline-warning mt-1" href="/admin#!/product/edit/@Model.Id">@Localizer["Edit View"]<i class="czi-arrow-right"></i></a>
+                        <a class="btn btn-outline-secondary mt-1" href="/admin#!/stocks">@Localizer["Stock"] - @Model.StockQuantity<i class="czi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>

@@ -158,5 +158,9 @@
   {
     "id": "SimplCommerce.Module.PurchaseForm",
     "version": "1.0.0"
+  },
+  {
+    "id": "SimplCommerce.Module.Connection",
+    "version": "1.0.0"
   }
 ]

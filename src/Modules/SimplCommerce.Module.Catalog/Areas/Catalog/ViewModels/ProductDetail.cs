@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Localization;
 using SimplCommerce.Module.Catalog.Models;
 using SimplCommerce.Module.Core.Areas.Core.ViewModels;
 
@@ -38,6 +39,16 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.ViewModels
         public double? RatingAverage { get; set; }
 
         public bool HasVariation => Variations.Any();
+
+        /// <summary>
+        /// 是否已經發布
+        /// </summary>
+        public bool IsPublished { get; set; }
+
+        /// <summary>
+        /// 檢視模式 Customer| Owner
+        /// </summary>
+        public string ViewMode { get; set; }
 
         public IList<ProductDetailOption> AvailableOptions
         {

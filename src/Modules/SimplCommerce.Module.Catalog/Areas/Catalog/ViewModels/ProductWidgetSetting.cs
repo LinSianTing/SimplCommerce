@@ -13,5 +13,10 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.ViewModels
         public ProductWidgetOrderBy OrderBy { get; set; }
 
         public bool FeaturedOnly { get; set; }
+
+        /// <summary>
+        /// 指名這個 ShopStore 的Id，如果為Null 就是不指明
+        /// </summary>
+        public long? ShopStoreId { get; set; }
     }
 }

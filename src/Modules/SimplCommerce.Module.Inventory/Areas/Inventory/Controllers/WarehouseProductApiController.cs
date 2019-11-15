@@ -15,7 +15,7 @@ using SimplCommerce.Module.Inventory.Services;
 namespace SimplCommerce.Module.Inventory.Areas.Inventory.Controllers
 {
     [Area("Inventory")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/warehouses")]
     public class WarehouseProductApiController : Controller
     {
@@ -48,6 +48,10 @@ namespace SimplCommerce.Module.Inventory.Areas.Inventory.Controllers
             {
                 return BadRequest(new { error = "You don't have permission to manage this warehouse" });
             }
+
+            //var query = _productRepository
+            //    .Query()
+            //    .Where(x => !x.HasOptions && x.VendorId == warehouse.VendorId);
 
             var query = _productRepository
                 .Query()
@@ -116,8 +120,11 @@ namespace SimplCommerce.Module.Inventory.Areas.Inventory.Controllers
                 return BadRequest(new { error = "You don't have permission to manage this warehouse" });
             }
 
-            var existedProducIds = await _stockRepository.Query().Where(x => x.WarehouseId == warehouseId && productIds.Contains(x.ProductId)).Select(x => x.ProductId).ToListAsync();
-            foreach(var id in existedProducIds)
+            var existedProducIds = await _stockRepository.Query()
+                        .Where(x => x.WarehouseId == warehouseId )
+                        .Select(x => x.ProductId).ToListAsync();
+
+            foreach (var id in existedProducIds)
             {
                 productIds.Remove(id);
             }

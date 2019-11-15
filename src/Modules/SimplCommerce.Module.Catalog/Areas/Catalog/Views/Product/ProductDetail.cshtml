@@ -31,6 +31,24 @@
 </nav>
 
 <div class="product-detail">
+    @{
+        if (Model.ViewMode == "Owner")
+        {
+            <div class="card">
+                <div class="card-header" id="cardBrandHeader">
+                    <h5 class="mb-0">
+                            @Localizer["This is your own product"] - @Model.Name
+                    </h5>
+                </div>
+                <div class="show">
+                    <div class="card-body" style='background-color: @(Model.IsPublished ? "lightgreen" : "lightgoldenrodyellow")'>
+                        @(Model.IsPublished ? Localizer["This product is already been published"] : Localizer["This product is not yet been published"])
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
     <div class="row">
         <div class="col-md-6">
             <div id="main-product-images" class="product-images">
@@ -43,7 +61,7 @@
                     }
                 </div>
             </div>
-            @foreach(var variant in Model.Variations)
+            @foreach (var variant in Model.Variations)
             {
                 if (variant.Images.Any())
                 {
@@ -57,7 +75,7 @@
                             }
                         </div>
                     </div>
-                 }
+                }
             }
         </div>
         <div class="col-md-6">

@@ -11,7 +11,7 @@ using SimplCommerce.Module.Reviews.Models;
 namespace SimplCommerce.Module.Reviews.Areas.Reviews.Controllers
 {
     [Area("Reviews")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin,vendor, farmer")]
     [Route("api/review-replies")]
     public class ReplyApiController : Controller
     {

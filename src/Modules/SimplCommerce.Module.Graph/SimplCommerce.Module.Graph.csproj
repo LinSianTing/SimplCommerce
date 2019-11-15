@@ -1,18 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <ItemGroup>
-    <Content Remove="wwwroot\graph.module.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\SimplCommerce.Infrastructure\SimplCommerce.Infrastructure.csproj" />
     <ProjectReference Include="..\SimplCommerce.Module.Core\SimplCommerce.Module.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="wwwroot\data.NongMinGo.v4.json">
-      <DependentUpon>data.NongMinGo.json</DependentUpon>
-    </Content>
-  </ItemGroup>
-  
 </Project>

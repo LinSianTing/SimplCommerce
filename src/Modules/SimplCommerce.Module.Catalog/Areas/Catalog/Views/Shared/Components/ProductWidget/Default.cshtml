@@ -1,6 +1,9 @@
 ﻿@model SimplCommerce.Module.Catalog.Areas.Catalog.ViewModels.ProductWidgetComponentVm
 
-<h2>@Model.WidgetName</h2>
+<div class="mt-2">
+    <h2>@Localizer["Product purchase"]</h2>
+</div>
+
 <div class="row product-list">
     @foreach (var product in Model.Products)
     {

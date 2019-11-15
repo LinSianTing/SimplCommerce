@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using SimplCommerce.Infrastructure.Data;
 using SimplCommerce.Module.Catalog.Areas.Catalog.ViewModels;
 using SimplCommerce.Module.Catalog.Models;
 using SimplCommerce.Module.Catalog.Services;
+using SimplCommerce.Module.Core.Extensions;
 using SimplCommerce.Module.Core.Services;
 using SimplCommerce.Module.Search.Areas.Search.ViewModels;
 using SimplCommerce.Module.Search.Models;
@@ -25,6 +27,7 @@ namespace SimplCommerce.Module.Search.Areas.Search.Controllers
         private readonly IRepository<Query> _queryRepository;
         private readonly IProductPricingService _productPricingService;
         private readonly IContentLocalizationService _contentLocalizationService;
+        private readonly IWorkContext _workContext;
 
         public SearchController(IRepository<Product> productRepository,
             IRepository<Brand> brandRepository,
@@ -33,7 +36,8 @@ namespace SimplCommerce.Module.Search.Areas.Search.Controllers
             IRepository<Query> queryRepository,
             IProductPricingService productPricingService,
             IContentLocalizationService contentLocalizationService,
-            IConfiguration config)
+            IConfiguration config,
+            IWorkContext workContext)
         {
             _productRepository = productRepository;
             _brandRepository = brandRepository;
@@ -43,15 +47,16 @@ namespace SimplCommerce.Module.Search.Areas.Search.Controllers
             _productPricingService = productPricingService;
             _contentLocalizationService = contentLocalizationService;
             _pageSize = config.GetValue<int>("Catalog.ProductPageSize");
+            _workContext = workContext;
         }
 
         [HttpGet("search")]
         public IActionResult Index(SearchOption searchOption)
         {
-            if (string.IsNullOrWhiteSpace(searchOption.Query))
-            {
-                return Redirect("~/");
-            }
+            //if (string.IsNullOrWhiteSpace(searchOption.Query))
+            //{
+            //    return Redirect("~/");
+            //}
 
             var brand = _brandRepository.Query().FirstOrDefault(x => x.Name == searchOption.Query && x.IsPublished);
             if (brand != null)
@@ -65,11 +70,21 @@ namespace SimplCommerce.Module.Search.Areas.Search.Controllers
                 FilterOption = new FilterOption()
             };
 
-            var query = _productRepository.Query().Where(x => x.Name.Contains(searchOption.Query) && x.IsPublished && x.IsVisibleIndividually);
+            IQueryable<Product> query = null;
+
+            if (!string.IsNullOrWhiteSpace(searchOption.Query))
+            {
+                query = _productRepository.Query().Where(x => x.Name.Contains(searchOption.Query) && !x.IsDeleted && x.IsPublished && x.IsVisibleIndividually);
+            }
+            else
+            {
+                query = _productRepository.Query().Where(x => !x.IsDeleted && x.IsPublished && x.IsVisibleIndividually);
+            }
 
             if (!query.Any())
             {
                 model.TotalProduct = 0;
+                SaveSearchQuery(searchOption, model);
                 return View(model);
             }
 
@@ -174,25 +189,51 @@ namespace SimplCommerce.Module.Search.Areas.Search.Controllers
                     Count = g.Count()
                 }).ToList();
 
+            List<FilterBrand> filterBrands = new List<FilterBrand>();
+            foreach (Product product in query.Include(x => x.Brand).Where(x => x.BrandId != null).ToList())
+            {
+                if (filterBrands.Count(a => a.Id == product.Brand.Id) != 0)
+                {
+                    FilterBrand filterBrand = filterBrands.Where(a => a.Id == product.Brand.Id).First();
+                    filterBrand.Count += 1;
+                }
+                else
+                {
+                    FilterBrand filterBrand = new FilterBrand()
+                    {
+                        Id = product.Brand.Id,
+                        Name = product.Brand.Name,
+                        Slug = product.Brand.Slug,
+                        Count = 1
+                    };
+                    filterBrands.Add(filterBrand);
+                }
+            }
+            model.FilterOption.Brands = filterBrands;
+
             // TODO an EF Core bug, so we have to do evaluation in client
-            model.FilterOption.Brands = query.Include(x => x.Brand)
-               .Where(x => x.BrandId != null).ToList()
-               .GroupBy(x => x.Brand)
-               .Select(g => new FilterBrand
-               {
-                   Id = (int)g.Key.Id,
-                   Name = g.Key.Name,
-                   Slug = g.Key.Slug,
-                   Count = g.Count()
-               }).ToList();
+            //model.FilterOption.Brands = query.Include(x => x.Brand)
+            //   .Where(x => x.BrandId != null).ToList()
+            //   .GroupBy(x => x.Brand)
+            //   .Select(g => new FilterBrand
+            //   {
+            //       Id = (int)g.Key.Id,
+            //       Name = g.Key.Name,
+            //       Slug = g.Key.Slug,
+            //       Count = g.Count()
+            //   }).ToList();
         }
 
-        private void SaveSearchQuery(SearchOption searchOption, SearchResult model)
+        private async void SaveSearchQuery(SearchOption searchOption, SearchResult model)
         {
+            var currentUser = await _workContext.GetCurrentUser();
+
             var query = new Query
             {
                 CreatedOn = DateTimeOffset.Now,
                 QueryText = searchOption.Query,
+                Category = searchOption.Category,
+                CreatedById = currentUser.Id,
                 ResultsCount = model.TotalProduct
             };
 

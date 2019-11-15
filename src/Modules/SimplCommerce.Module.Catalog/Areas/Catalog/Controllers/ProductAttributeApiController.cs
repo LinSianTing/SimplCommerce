@@ -8,7 +8,7 @@ using SimplCommerce.Module.Catalog.Models;
 namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
 {
     [Area("Catalog")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/product-attributes")]
     public class ProductAttributeApiController : Controller
     {

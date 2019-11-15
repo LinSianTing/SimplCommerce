@@ -8,7 +8,7 @@
         var vm = this;
         vm.translate = translateService;
         // declare shoreDescription and description for summernote
-        vm.product = { shortDescription: '', description: '', specification: '', isPublished: true, price: 0, isCallForPricing: false, isAllowToOrder: true };
+        vm.product = { shortDescription: '', description: '', specification: '', isPublished: true, price: 0, oldPrice: 0, isCallForPricing: false, isAllowToOrder: true };
         vm.product.categoryIds = [];
         vm.product.options = [];
         vm.product.variations = [];
@@ -306,6 +306,11 @@
         function save(mode) {
             var promise;
 
+            if (vm.product.price == 0) {
+                alert(vm.translate.get('please check your product price'));
+                return;
+            }
+
             // ng-upload will post null as text
             vm.product.taxClassId = vm.product.taxClassId === null ? '' : vm.product.taxClassId;
             vm.product.brandId = vm.product.brandId === null ? '' : vm.product.brandId;
@@ -333,6 +338,7 @@
             if (vm.isEditMode) {
                 promise = productService.editProduct(vm.product, vm.thumbnailImage, vm.productImages, vm.productDocuments);
             } else {
+                vm.product.brandId = vm.user.id;
                 promise = productService.createProduct(vm.product, vm.thumbnailImage, vm.productImages, vm.productDocuments);
             }
 
@@ -429,7 +435,7 @@
         }
 
         function getUser() {
-                userService.getUser(67).then(function (result) {
+                userService.getUser().then(function (result) {
                 if (result.data) {
                     vm.user = result.data;
                 }

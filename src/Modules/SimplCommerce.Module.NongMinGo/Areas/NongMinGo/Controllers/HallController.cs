@@ -35,26 +35,5 @@ namespace SimplCommerce.Module.NongMinGo.Areas.NongMinGo.Controllers
 
             return View(model);
         }
-
-
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Post([FromBody]object model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _workContext.GetCurrentUser();
-
-                if (!User.IsInRole("admin"))
-                {
-                    var isCommentsRequireApproval = _config.GetValue<bool>("Catalog.IsCommentsRequireApproval");
-                }
-
-                return Ok(new { });
-            }
-
-            return BadRequest(ModelState);
-        }
     }
 }

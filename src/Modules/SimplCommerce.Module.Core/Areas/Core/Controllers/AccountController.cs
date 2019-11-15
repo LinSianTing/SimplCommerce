@@ -72,20 +72,6 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-
-
-                //#region LinSianTing20191115-Bug處理，Cookie清不乾淨
-                //// SignOutAsync : 似乎運作不正常，不能正常清除Cookie
-                //foreach (var cookie in Request.Cookies.Keys)
-                //{
-                //    if (cookie == SimplCommerce.Module.Core.Extensions.WorkContext.UserGuidCookiesName)
-                //    {
-                //        Response.Cookies.Delete(cookie);
-                //    }
-                //}
-                //#endregion
-
-
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
@@ -144,11 +130,23 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
                     //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                     //    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
-                    await _userManager.AddToRoleAsync(user, "customer");
+                    #region Todo
+                    /*
+                     * Note : linsianting20191115001
+                     * 有點太威了，應該要修改，不是一註冊都給他當farmer, 那 customer 怎麼辦?? 之後修改
+                     * 應該不是一開始用FB or Google 註冊的人，我們都直接給予角色Farmer, 應該要到 Products頁 第一次新增產品時，按下使用者同意 才轉換。 不然 Customer 怎麼辦? 怎麼界定?
+                     * 然後 Farmer 才配給 VendorId
+                     */
+                    #endregion
+                    await _userManager.AddToRoleAsync(user, "farmer");
 
                     #region LinSianTing : 20191113新增-註冊帳戶同時新增該人的Brand
 
                     user = await _userManager.FindByEmailAsync(model.Email);
+
+                    // Note : linsianting20191115001
+                    user.VendorId = user.Id;
+                    await _userManager.UpdateAsync(user);
 
                     var brand = new Brand
                     {
@@ -181,16 +179,6 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            //#region LinSianTing20191115-Bug處理，Cookie清不乾淨
-            //// SignOutAsync : 似乎運作不正常，不能正常清除Cookie
-            //foreach (var cookie in Request.Cookies.Keys)
-            //{
-            //    if(cookie == SimplCommerce.Module.Core.Extensions.WorkContext.UserGuidCookiesName)
-            //    {
-            //        Response.Cookies.Delete(cookie);
-            //    }
-            //}
-            //#endregion
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
@@ -269,11 +257,23 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "customer");
+                    #region Todo
+                    /*
+                     * Note : linsianting20191115001
+                     * 有點太威了，應該要修改，不是一註冊都給他當farmer, 那 customer 怎麼辦?? 之後修改
+                     * 應該不是一開始用FB or Google 註冊的人，我們都直接給予角色Farmer, 應該要到 Products頁 第一次新增產品時，按下使用者同意 才轉換。 不然 Customer 怎麼辦? 怎麼界定?
+                     * 然後 Farmer 才配給 VendorId
+                     */
+                    #endregion
+                    await _userManager.AddToRoleAsync(user, "farmer");
 
                     #region LinSianTing : 20191113新增-註冊帳戶同時新增該人的Brand
 
                     user = await _userManager.FindByEmailAsync(model.Email);
+
+                    // Note : linsianting20191115001
+                    user.VendorId = user.Id;
+                    await _userManager.UpdateAsync(user);
 
                     var brand = new Brand
                     {

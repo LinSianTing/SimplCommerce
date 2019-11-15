@@ -1,58 +1,98 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SimplCommerce.Infrastructure.Data;
 using SimplCommerce.Infrastructure.Web.SmartTable;
+using SimplCommerce.Module.Catalog.Models;
 using SimplCommerce.Module.Core.Events;
+using SimplCommerce.Module.Core.Extensions;
 using SimplCommerce.Module.Reviews.Data;
 using SimplCommerce.Module.Reviews.Models;
 
 namespace SimplCommerce.Module.Reviews.Areas.Reviews.Controllers
 {
     [Area("Reviews")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin,vendor, farmer")]
     [Route("api/reviews")]
     public class ReviewApiController : Controller
     {
+        private readonly IRepository<Product> _productRepository;
         private readonly IReviewRepository _reviewRepository;
         private readonly IMediator _mediator;
+        private readonly IWorkContext _workContext;
 
-        public ReviewApiController(IReviewRepository reviewRepository, IMediator mediator)
+        public ReviewApiController(IRepository<Product> productRepository, IReviewRepository reviewRepository, IMediator mediator, IWorkContext workContext)
         {
+            _productRepository = productRepository;
             _reviewRepository = reviewRepository;
             _mediator = mediator;
+            _workContext = workContext;
         }
 
         [HttpGet]
-        public ActionResult Get(int status, int numRecords)
+        public async Task<IActionResult> Get(int status, int numRecords)
         {
-            var reviewStatus = (ReviewStatus) status;
+            var reviewStatus = (ReviewStatus)status;
+
             if ((numRecords <= 0) || (numRecords > 100))
             {
                 numRecords = 5;
             }
 
-            var model = _reviewRepository
-                .List()
-                .Where(x => x.Status == reviewStatus)
-                .OrderByDescending(x => x.CreatedOn)
-                .Take(numRecords)
-                .Select(x => new
-                {
-                    x.Id,
-                    x.ReviewerName,
-                    x.EntityName,
-                    x.EntitySlug,
-                    x.Rating,
-                    x.Title,
-                    x.Comment,
-                    Status = x.Status.ToString(),
-                    x.CreatedOn
-                });
+            if (User.IsInRole("admin"))
+            {
+                var model = _reviewRepository
+                                      .List()
+                                      .Where(x => x.Status == reviewStatus)
+                                      .OrderByDescending(x => x.CreatedOn)
+                                      .Take(numRecords)
+                                      .Select(x => new
+                                      {
+                                          x.Id,
+                                          x.ReviewerName,
+                                          x.EntityName,
+                                          x.EntitySlug,
+                                          x.Rating,
+                                          x.Title,
+                                          x.Comment,
+                                          Status = x.Status.ToString(),
+                                          x.CreatedOn
+                                      });
 
-            return Json(model);
+                return Json(model);
+            }
+            else
+            {
+                var currentUser = await _workContext.GetCurrentUser();
+
+                var query = _productRepository.Query().Where(x => x.BrandId == currentUser.Id);
+
+                var thisFarmerProductList = query.Select(a=>a.Id);
+
+                var model = _reviewRepository
+                    .List()
+                    .Where(x => x.Status == reviewStatus && thisFarmerProductList.Contains(x.EntityId))
+                    .OrderByDescending(x => x.CreatedOn)
+                    .Take(numRecords)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.ReviewerName,
+                        x.EntityName,
+                        x.EntitySlug,
+                        x.Rating,
+                        x.Title,
+                        x.Comment,
+                        Status = x.Status.ToString(),
+                        x.CreatedOn
+                    });
+
+                return Json(model);
+            }
         }
 
         [HttpPost("grid")]
@@ -77,7 +117,7 @@ namespace SimplCommerce.Module.Reviews.Areas.Reviews.Controllers
 
                 if (search.Status != null)
                 {
-                    var status = (ReviewStatus) search.Status;
+                    var status = (ReviewStatus)search.Status;
                     query = query.Where(x => x.Status == status);
                 }
 
@@ -126,7 +166,7 @@ namespace SimplCommerce.Module.Reviews.Areas.Reviews.Controllers
 
             if (Enum.IsDefined(typeof(ReviewStatus), statusId))
             {
-                review.Status = (ReviewStatus) statusId;
+                review.Status = (ReviewStatus)statusId;
                 _reviewRepository.SaveChanges();
 
                 var rattings = _reviewRepository.Query()
@@ -152,7 +192,7 @@ namespace SimplCommerce.Module.Reviews.Areas.Reviews.Controllers
                 await _reviewRepository.SaveChangesAsync();
                 return Accepted();
             }
-            return BadRequest(new {Error = "unsupported order status"});
+            return BadRequest(new { Error = "unsupported order status" });
         }
     }
 }

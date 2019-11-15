@@ -70,7 +70,7 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Components
                 return View(model);
             }
 
-            var query = _productRepository.Query().Where(x => x.BrandId == user.Id && x.IsPublished && x.IsVisibleIndividually);
+            var query = _productRepository.Query().Where(x => x.BrandId == user.Id && !x.IsDeleted && x.IsVisibleIndividually);
 
             if (query.Count() == 0)
             {

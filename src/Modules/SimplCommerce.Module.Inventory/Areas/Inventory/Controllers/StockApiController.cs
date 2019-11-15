@@ -14,7 +14,7 @@ using SimplCommerce.Module.Inventory.Services;
 namespace SimplCommerce.Module.Inventory.Areas.Inventory.Controllers
 {
     [Area("Inventory")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/stocks")]
     public class StockApiController : Controller
     {

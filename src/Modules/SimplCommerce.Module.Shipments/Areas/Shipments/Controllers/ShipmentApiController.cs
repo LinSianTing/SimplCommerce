@@ -15,7 +15,7 @@ using SimplCommerce.Module.Shipments.Services;
 namespace SimplCommerce.Module.Shipments.Areas.Shipments.Controllers
 {
     [Area("Shipments")]
-    [Authorize(Roles = "admin, vendor")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/shipments")]
     public class ShipmentApiController : Controller
     {

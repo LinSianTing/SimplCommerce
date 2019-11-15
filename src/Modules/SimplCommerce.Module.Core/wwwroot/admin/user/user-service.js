@@ -23,7 +23,11 @@
         }
 
         function getUser(id) {
-            return $http.get('api/users/' + id);
+            if (id == null) {
+                return $http.get('api/users/');
+            } else {
+                return $http.get('api/users/' + id);
+            }
         }
 
         function quickSearchUsers(name) {
