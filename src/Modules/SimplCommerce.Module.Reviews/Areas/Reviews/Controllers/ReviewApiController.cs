@@ -96,7 +96,7 @@ namespace SimplCommerce.Module.Reviews.Areas.Reviews.Controllers
         }
 
         [HttpPost("grid")]
-        public ActionResult List([FromBody] SmartTableParam param)
+        public async Task<IActionResult> List([FromBody] SmartTableParam param)
         {
             var query = _reviewRepository.List();
 
@@ -137,7 +137,13 @@ namespace SimplCommerce.Module.Reviews.Areas.Reviews.Controllers
                 }
             }
 
-            var reviews = query.ToSmartTableResult(
+            var currentUser = await _workContext.GetCurrentUser();
+
+            var thisFarmerProductList = _productRepository.Query().Where(x => x.BrandId == currentUser.Id).Select(a => a.Id);
+
+            var reviews = query
+                .Where(a => thisFarmerProductList.Contains(a.EntityId))
+                .ToSmartTableResult(
                 param,
                 x => new
                 {

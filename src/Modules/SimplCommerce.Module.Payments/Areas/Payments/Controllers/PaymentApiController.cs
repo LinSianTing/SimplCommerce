@@ -10,7 +10,7 @@ using SimplCommerce.Module.Payments.Models;
 namespace SimplCommerce.Module.Payments.Areas.Payments.Controllers
 {
     [Area("Payments")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin, vendor, farmer")]
     [Route("api/payments")]
     public class PaymentApiController : Controller
     {

@@ -5,7 +5,7 @@
 <h1>@Localizer["Dashboard"]</h1>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">@Localizer["Latest orders"]</h3>
@@ -15,6 +15,20 @@
             </div>
         </div>
     </div>
+</div>
+@if (User.IsInRole("admin") || User.IsInRole("vendor") || User.IsInRole("farmer"))
+{
+<div class="row">
+    @*<div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@Localizer["Pending review replies"]</h3>
+                </div>
+                <div class="panel-body">
+                    <review-reply-widget status="1" num-records="5"></review-reply-widget>
+                </div>
+            </div>
+        </div>*@
     @if (User.IsInRole("admin") || User.IsInRole("vendor") || User.IsInRole("farmer"))
     {
         <div class="col-md-6">
@@ -28,34 +42,20 @@
             </div>
         </div>
     }
-</div>
-@if (User.IsInRole("admin") || User.IsInRole("vendor") || User.IsInRole("farmer"))
-{
-    <div class="row">
+    @if (User.IsInRole("admin") || User.IsInRole("vendor") || User.IsInRole("farmer"))
+    {
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">@Localizer["Pending review replies"]</h3>
+                    <h3 class="panel-title">@Localizer["Approved reviews"]</h3>
                 </div>
                 <div class="panel-body">
-                    <review-reply-widget status="1" num-records="5"></review-reply-widget>
+                    <review-widget status="5" num-records="5"></review-widget>
                 </div>
             </div>
         </div>
-        @if (User.IsInRole("admin") || User.IsInRole("vendor") || User.IsInRole("farmer"))
-        {
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">@Localizer["Approved reviews"]</h3>
-                    </div>
-                    <div class="panel-body">
-                        <review-widget status="5" num-records="5"></review-widget>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
+    }
+</div>
 }
 
 <div class="row">
@@ -72,7 +72,7 @@
             </div>
         </div>
     }
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">@Localizer["Most viewed products"]</h3>

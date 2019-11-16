@@ -163,10 +163,10 @@
                         </li>
                     }
                     <li class="dropdown">
-                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Catalog"] <span class="caret"></span></a>
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Product Management"] <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a ui-sref="product">@Localizer["Products"]</a></li>
-                            <li><a ui-sref="product-prices">@Localizer["Product Prices"]</a></li>
+                            <li><a ui-sref="product">@Localizer["Products Management"]</a></li>
+                            <li><a ui-sref="product-prices">@Localizer["Product Prices Management"]</a></li>
                             @if (User.IsInRole("admin"))
                             {
                                 <li><a ui-sref="category">@Localizer["Categories"]</a></li>
@@ -179,17 +179,17 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Sales"] <span class="caret"></span></a>
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Sales Management"] <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a ui-sref="order">@Localizer["Orders"]</a></li>
-                            <li><a ui-sref="shipments">@Localizer["Shipments"]</a></li>
+                            <li><a ui-sref="order">@Localizer["Orders Management"]</a></li>
+                            <li><a ui-sref="shipments">@Localizer["Shipments Management"]</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Inventory"] <span class="caret"></span></a>
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Inventory Management"] <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a ui-sref="stocks">@Localizer["Stocks"]</a></li>
-                            <li><a ui-sref="warehouses">@Localizer["Warehouses"]</a></li>
+                            <li><a ui-sref="stocks">@Localizer["Stocks Management"]</a></li>
+                            <li><a ui-sref="warehouses">@Localizer["Warehouses Management"]</a></li>
                             <li><a ui-sref="warehouse-manage-products">@Localizer["Manage warehouse products"]</a></li>
                         </ul>
                     </li>

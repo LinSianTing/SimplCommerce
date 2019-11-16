@@ -1,4 +1,4 @@
-<div class="page-header">
+﻿<div class="page-header">
     <div class="row">
         <div class="col-md-8">
             <h2>{{::vm.translate.get('Review Replies')}}</h2>
@@ -45,7 +45,10 @@
             <td>{{reply.comment}}</td>
             <td>{{reply.createdOn | date:'medium'}}</td>
             <td>{{reply.status }}</td>
-            <td><button ng-if="reply.status ==='Pending'" title="Approve" ng-click="vm.approve(reply)" class="btn btn-primary btn-xs">{{::vm.translate.get('Approve')}}</button></td>
+            <td>
+            <button ng-if="reply.status ==='Pending'" title="Approve" ng-click="vm.approve(reply)" class="btn btn-primary btn-xs">{{::vm.translate.get('Approve')}}</button>
+            <button ng-if="reply.status ==='Pending'" title="NotApproved" ng-click="vm.notApproved(reply)" class="btn btn-primary btn-xs">{{::vm.translate.get('Not Approved')}}</button>
+            </td>
         </tr>
     </tbody>
     <tbody ng-show="vm.isLoading">

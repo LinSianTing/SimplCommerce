@@ -12,7 +12,14 @@
     <tbody>
         <tr ng-repeat="order in vm.orders">
             <td>{{order.id}}</td>
-            <td>{{order.orderStatus}}</td>
+            <td>
+                
+                <span ng-if="order.orderStatus ==='New'" class="glyphicon glyphicon-plus"></span>
+                <span ng-if="order.orderStatus ==='Complete'" class="glyphicon glyphicon-ok"></span>
+                <span ng-if="order.orderStatus ==='Shipped'" class="glyphicon glyphicon-transfer"></span>
+
+                <label class="mx-2">{{order.orderStatus}}</label>
+            </td>
             <td>{{order.customerName}}</td>
             <td>{{order.createdOn | date:'medium'}}</td>
             <td class="text-right">{{order.orderTotalString }}</td>

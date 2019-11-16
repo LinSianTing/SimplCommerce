@@ -7,6 +7,7 @@
             <th>{{::vm.translate.get('Title')}}</th>
             <th>{{::vm.translate.get('Comment')}}</th>
             <th>{{::vm.translate.get('Created On')}}</th>
+            <th>{{::vm.translate.get('Actions')}}</th>
             <th>{{::vm.translate.get('Status')}}</th>
         </tr>
     </thead>
@@ -18,6 +19,7 @@
             <td>{{review.title}}</td>
             <td>{{review.comment}}</td>
             <td>{{review.createdOn | date:'medium'}}</td>
+            <td><a ui-sref="reviews({id: review.id})" title="View" class="btn btn-primary btn-xs"> <span class="glyphicon glyphicon-eye-open"></span></a></td>
             <td>{{review.status }}</td>
         </tr>
     </tbody>

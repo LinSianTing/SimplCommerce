@@ -24,5 +24,12 @@
                     reply.status = 'Approved';
                 });
         };
+
+        vm.approve = function notApproved(reply) {
+            reviewReplyService.changeReplyStatus(reply.id, 8)
+                .then(function (result) {
+                    reply.status = 'NotApproved';
+                });
+        };
     }
 })();
