@@ -23,23 +23,22 @@
 </div>
 
 <div class="row">
+
+    <div class="col-xs-6 col-md-4">
+        <div class="card mb-4">
+            <a href="/admin#!/product-create">
+                <img alt="addnewoneicon.png" class="card-img-top" src="/public/images/products/addnewoneicon.png">
+                <div class="card-body">
+                    <h5 class="card-title product-name">@Localizer["Create your new product"]</h5>
+                </div>
+            </a>
+        </div>
+    </div>
+
     @foreach (var product in Model.Products)
     {
         <div class="col-xs-6 col-md-4">
             <partial name="_MyProductThumbnail" model="product" />
         </div>
     }
-
-<div class="col-xs-6 col-md-4">
-    <div class="card mb-4">
-        <a href="/admin#!/product-create">
-            <img alt="addnewoneicon.png" class="card-img-top" src="/public/images/products/addnewoneicon.png">
-            <div class="card-body">
-                <h5 class="card-title product-name">@Localizer["Create your new product"]</h5>
-            </div>
-        </a>
-    </div>
-</div>
-
-
 </div>
