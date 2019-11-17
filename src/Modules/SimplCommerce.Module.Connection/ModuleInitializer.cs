@@ -15,6 +15,7 @@ namespace SimplCommerce.Module.NongMinGo
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            ////GlobalConfiguration.RegisterAngularModule("nongMinGo.connection");
             //GlobalConfiguration.RegisterAngularModule("simplAdmin.catalog");
         }
 

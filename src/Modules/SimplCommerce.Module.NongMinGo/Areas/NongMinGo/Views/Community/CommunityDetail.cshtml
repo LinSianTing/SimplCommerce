@@ -1,0 +1,9 @@
+﻿@model SimplCommerce.Module.NongMinGo.Areas.NongMinGo.ViewModels.CommunityViewModel
+
+@{
+    ViewBag.Title = Localizer["Community"];
+}
+
+@*@await Component.InvokeAsync("Connection")*@
+
+<partial name="_WidgetInstances" model="Model.WidgetInstances.Where(x => x.WidgetZoneId == WidgetZoneIds.HomeMainContent)" />

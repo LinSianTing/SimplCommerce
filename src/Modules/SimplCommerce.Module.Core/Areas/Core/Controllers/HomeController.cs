@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SimplCommerce.Infrastructure.Data;
 using SimplCommerce.Module.Core.Areas.Core.ViewModels;
+using SimplCommerce.Module.Core.Models;
 using SimplCommerce.Module.Core.Services;
 
 namespace SimplCommerce.Module.Core.Areas.Core.Controllers
@@ -27,7 +30,8 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
         }
 
         [HttpGet("/")]
-        public IActionResult Index()
+        [HttpGet("/gn/{id}")]
+        public IActionResult Index(string id)
         {
             // CodeNote : 首先進入controller，接下來指定要運行的ViewModel，最後透過 Return View(); 把 前後端整合。
             var model = new HomeViewModel();
@@ -42,7 +46,8 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
                 WidgetId = x.WidgetId,
                 WidgetZoneId = x.WidgetZoneId,
                 Data = x.Data,
-                HtmlData = x.HtmlData
+                HtmlData = x.HtmlData,
+                UrlParameter = id
             }).ToList();
 
             return View(model);

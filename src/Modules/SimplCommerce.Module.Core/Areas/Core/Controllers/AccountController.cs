@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -28,6 +29,8 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
         private readonly ILogger _logger;
         private readonly IRepository<Brand> _brandRepository;
         private readonly IBrandService _brandService;
+        private readonly IRepository<Connection> _connectionRepository;
+        private readonly IConnectionService _connectionService;
 
         public AccountController(
             UserManager<User> userManager,
@@ -36,7 +39,9 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
             ISmsSender smsSender,
             ILoggerFactory loggerFactory,
             IRepository<Brand> brandRepository,
-            IBrandService brandService)
+            IBrandService brandService,
+                        IRepository<Connection> connectionRepository,
+            IConnectionService connectionService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -46,6 +51,9 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
 
             _brandRepository = brandRepository;
             _brandService = brandService;
+
+            _connectionRepository = connectionRepository;
+            _connectionService = connectionService;
         }
 
         //
@@ -158,6 +166,44 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
 
                     await _brandService.Create(brand);
 
+                    #endregion
+
+                    #region LinSianTing : 20191116新增-Connection
+
+                    List<User> allUserQuery = _userManager.Users.Where(a => a.VendorId != null).ToList();
+
+                    foreach (User otherUser in allUserQuery)
+                    {
+                        Connection connectionFrom = new Connection()
+                        {
+                            Source = otherUser.Id,
+                            Target = user.Id,
+                            Category = "FaceBook",
+                            Type = "Friend",
+                            CreatedOn = DateTime.Now
+                        };
+
+                        //await _connectionService.Create(connectionFrom);
+                        _connectionRepository.Add(connectionFrom);
+
+                        Connection connectionTo = new Connection()
+                        {
+                            Source = user.Id,
+                            Target = otherUser.Id,
+                            Category = "FaceBook",
+                            Type = "Friend",
+                            CreatedOn = DateTime.Now
+                        };
+
+                        //await _connectionService.Create(connectionTo);
+                        _connectionRepository.Add(connectionTo);
+                    }
+
+                    using (var transaction = _connectionRepository.BeginTransaction())
+                    {
+                        await _connectionRepository.SaveChangesAsync();
+                        transaction.Commit();
+                    }
                     #endregion
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -286,6 +332,46 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
                     await _brandService.Create(brand);
 
                     #endregion
+
+
+                    #region LinSianTing : 20191116新增-Connection
+
+                    List<User> allUserQuery = _userManager.Users.Where(a => a.VendorId != null).ToList();
+
+                    foreach (User otherUser in allUserQuery)
+                    {
+                        Connection connectionFrom = new Connection()
+                        {
+                            Source = otherUser.Id,
+                            Target = user.Id,
+                            Category = "FaceBook",
+                            Type = "Friend",
+                            CreatedOn = DateTime.Now
+                        };
+
+                        //await _connectionService.Create(connectionFrom);
+                        _connectionRepository.Add(connectionFrom);
+
+                        Connection connectionTo = new Connection()
+                        {
+                            Source = user.Id,
+                            Target = otherUser.Id,
+                            Category = "FaceBook",
+                            Type = "Friend",
+                            CreatedOn = DateTime.Now
+                        };
+
+                        //await _connectionService.Create(connectionTo);
+                        _connectionRepository.Add(connectionTo);
+                    }
+
+                    using (var transaction = _connectionRepository.BeginTransaction())
+                    {
+                        await _connectionRepository.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    #endregion
+
 
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)

@@ -1,0 +1,16 @@
+﻿.page-header {
+    padding-bottom: 9px;
+    margin: 20px 0 30px;
+    border-bottom: 1px solid #eeeeee;
+    color: black;
+}
+
+    .page-header small {
+        color: lightgray;
+    }
+
+.list-group-item:hover {
+    color: #337ab7;
+    text-shadow: 0 0 1em #337ab7;
+    cursor: pointer;
+}

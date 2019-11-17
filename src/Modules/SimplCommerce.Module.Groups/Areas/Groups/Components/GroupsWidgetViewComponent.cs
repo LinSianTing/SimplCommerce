@@ -29,7 +29,7 @@ namespace SimplCommerce.Module.Groups.Areas.Groups.Components
                 //Setting = JsonConvert.DeserializeObject<ProductWidgetSetting>(widgetInstance.Data)
             };
 
-            List<string> listGroups = new List<string>() { "深溝社群", "慢島生活" , "主婦聯盟"};
+            List<string> listGroups = new List<string>() { "深溝社群", "員山農會" , "新青農陣線"};
             model.Groups = listGroups;
 
             return View(this.GetViewPath(), model);

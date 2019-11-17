@@ -16,11 +16,36 @@
 
 
 <div class="page-header">
-    <h3>
-        @Localizer["My Agricultural Product"] <small> @Localizer["all your agricultural products"]</small>
-        <a class="btn btn-outline-info float-right" href="~/admin">@Localizer["go to management hall"]<i class="czi-arrow-right"></i></a>
-    </h3>
-</div>
+    <div class="row">
+        <div class="col-xs-6 col-md-4">
+            <h3>
+                @Localizer["My Agricultural Product"] <small> @Localizer["all your agricultural products"]</small>
+            </h3>
+        </div>
+        <div class="col-xs-6 col-md-6">
+            @*<div class="form-group">
+                <h4>
+                    @Localizer["Share your own nongmingo page"] 
+                    <small> @Localizer["let to share with your friends"]</small>
+                </h4>
+                <small>
+                    @Localizer["Link"] :
+                </small>
+                <input type="text" class="form-control" value="https://www.nongmingo.com/ui/@(Model.BrandId)" />
+            </div>*@
+
+            <div class="line-it-button" data-lang="zh_Hant" data-type="share-a" data-ver="3" data-url="https://www.nongmingo.com/ui/@(Model.BrandId)" data-color="default" data-size="small" data-count="false" style="display: none;"></div>
+            <script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script>
+
+            <div class="fb-share-button" data-href="https://www.nongmingo.com/ui/@(Model.BrandId)" data-layout="button" data-size="small">
+                <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.nongmingo.com%2Fui%2F@(Model.BrandId)&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">分享</a>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-2">
+            <a class="btn btn-outline-info float-right" href="~/admin">@Localizer["go to management hall"]<i class="czi-arrow-right"></i></a>
+        </div>
+    </div>
+    </div>
 
 <div class="row">
 

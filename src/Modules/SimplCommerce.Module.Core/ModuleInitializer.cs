@@ -17,6 +17,7 @@ namespace SimplCommerce.Module.Core
             serviceCollection.AddTransient<IEntityService, EntityService>();
             serviceCollection.AddTransient<IMediaService, MediaService>();
             serviceCollection.AddTransient<IThemeService, ThemeService>();
+            serviceCollection.AddTransient<IConnectionService, ConnectionService>();
 
             // CodeNote : WidgetInstanceService 是 WidgetInstance 的上層乘載，負責管理與統包 WidgetInstance
             serviceCollection.AddTransient<IWidgetInstanceService, WidgetInstanceService>();

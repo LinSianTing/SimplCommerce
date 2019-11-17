@@ -15,5 +15,7 @@
         public string HtmlData { get; set; }
 
         public string WidgetId { get; set; }
+
+        public string UrlParameter { get; set; }
     }
 }

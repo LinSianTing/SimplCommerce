@@ -14,6 +14,9 @@ namespace SimplCommerce.Module.Core.Data
             modelBuilder.Entity<User>()
                 .ToTable("Core_User");
 
+            modelBuilder.Entity<Connection>()
+                .ToTable("Connetion_Connections");
+
             modelBuilder.Entity<Role>()
                 .ToTable("Core_Role");
 

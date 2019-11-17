@@ -43,7 +43,7 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
                 query = query.Where(x => x.Email.Contains(searchOption.Email));
             }
 
-           var users = await query.Take(5).Select(x => new
+            var users = await query.Take(5).Select(x => new
             {
                 x.Id,
                 x.FullName,
@@ -52,6 +52,36 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
             }).ToListAsync();
 
             return Ok(users);
+        }
+
+        /// <summary>
+        /// ToDo : Eric Lin
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet("listGrid")]
+        public IActionResult ListGrid([FromBody] SmartTableParam param)
+        {
+            var query = _userRepository.Query()
+                .Include(x => x.Roles)
+                    .ThenInclude(x => x.Role)
+                .Include(x => x.CustomerGroups)
+                    .ThenInclude(x => x.CustomerGroup)
+                .Where(x => !x.IsDeleted);
+
+            var users = query.ToSmartTableResultNoProjection(
+                param,
+                user => new
+                {
+                    user.Id,
+                    user.Email,
+                    user.FullName,
+                    user.CreatedOn,
+                    Roles = user.Roles.Select(x => x.Role.Name),
+                    CustomerGroups = user.CustomerGroups.Select(x => x.CustomerGroup.Name)
+                });
+
+            return Json(users);
         }
 
         [HttpPost("grid")]
@@ -232,7 +262,7 @@ namespace SimplCommerce.Module.Core.Areas.Core.Controllers
                     .Include(x => x.CustomerGroups)
                     .FirstOrDefaultAsync(x => x.Id == id);
 
-                if(user == null)
+                if (user == null)
                 {
                     return NotFound();
                 }

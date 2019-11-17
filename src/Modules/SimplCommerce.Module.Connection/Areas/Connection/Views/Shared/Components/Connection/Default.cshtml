@@ -1,19 +1,77 @@
 ﻿@inject IViewLocalizer Localizer
 
-<style type="text/css">
-    .page-header {
-        padding-bottom: 9px;
-        margin: 20px 0 30px;
-        border-bottom: 1px solid #eeeeee;
-        color: black;
-    }
+<link simpl-append-version="true" rel="stylesheet" href="~/modules/connection/connection.css" />
+@*<script simpl-append-version="true" src="~/modules/connection/connection-service.js"></script>*@
 
-        .page-header small {
-            color: lightgray;
-        }
-</style>
+@*<script type="text/javascript">
+    var connectionUserData = [
+        { name: "eric", id: 1 },
+        { name: "eric2", id: 2 },
+        { name: "allen", id: 3 },
+        { name: "bill", id: 4 },
+        { name: "ekillric", id: 5 },
+        { name: "ewwwric", id: 6 },
+        { name: "eric", id: 7 }
+    ];
+</script>
 
+<script simpl-append-version="true" src="~/modules/core/admin/user/user-service.js"></script>
+<script simpl-append-version="true" src="~/modules/connection/connection.js"></script>
 
 <div class="page-header">
     <h3>@Localizer["Friends"] <small> @Localizer["your own connection"]</small></h3>
 </div>
+
+<h2>@Localizer["Add Friends"]</h2>
+
+<div class="row" ng-app="app" ng-controller="fbFrinedsCtrl" ng-init="loadUser()">
+    <div class="container col-md-3">
+        <label>Enter User Name to add your friend connection</label>
+    </div>
+    <div class="container col-md-6">
+        <input type="text" name="user" id="user" ng-model="userdata.name" ng-keyup="complete(userdata)" class="form-control" />
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="userdata in filterUserDataList" ng-click="fillTextbox(userdata)">{{userdata.name}}</li>
+        </ul>
+    </div>
+    <div class="container col-md-3">
+        <button type="button" class="btn btn-outline-success float-left" ng-click="addConnection(userdata.id)">Add Connection</button>
+    </div>
+</div>*@
+
+
+@*<h2>@Localizer["Add Like"]</h2>
+    <div class="row">
+        <div ng-app="app" ng-controller="fbFrinedsCtrl" ng-init="loadUser()">
+            <div class="container col-md-9">
+                <h3 align="left">AngularJS Autocomplete Textbox</h3>
+                <label>Enter User Name</label>
+                <input type="text" name="user" id="user" ng-model="userdata.name" ng-keyup="complete(userdata)" class="form-control" />
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="userdata in filterUserDataList" ng-click="fillTextbox(userdata)">{{userdata.name}}</li>
+                </ul>
+            </div>
+            <div class="container col-md-3">
+                <button type="button" class="btn btn-outline-success float-left" ng-click="addConnection(userdata.id)">Add Connection</button>
+            </div>
+        </div>
+    </div>
+
+    <h2>@Localizer["Add follow"]</h2>
+    <div class="row">
+        <div ng-app="app" ng-controller="fbFrinedsCtrl" ng-init="loadUser()">
+            <div class="container col-md-9">
+                <h3 align="left">AngularJS Autocomplete Textbox</h3>
+                <label>Enter User Name</label>
+                <input type="text" name="user" id="user" ng-model="userdata.name" ng-keyup="complete(userdata)" class="form-control" />
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="userdata in filterUserDataList" ng-click="fillTextbox(userdata)">{{userdata.name}}</li>
+                </ul>
+            </div>
+            <div class="container col-md-3">
+                <button type="button" class="btn btn-outline-success float-left" ng-click="addConnection(userdata.id)">Add Connection</button>
+            </div>
+        </div>
+    </div>*@
+
+

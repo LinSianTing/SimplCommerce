@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SimplCommerce.Module.Graph.Models;
 
 namespace SimplCommerce.Module.Groups.Areas.Groups.ViewModels
 {
@@ -11,5 +12,8 @@ namespace SimplCommerce.Module.Groups.Areas.Groups.ViewModels
         //public ProductWidgetSetting Setting { get; set; }
 
         public List<string> Groups { get; set; }
+
+        public GraphData GraphData { get; set; }
+        public string GraphDataStr { get; set; }
     }
 }

@@ -9,14 +9,64 @@ var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2));
 
+var HtmlUtil = {
+    /*1.用浏览器内部转换器实现html转码*/
+    htmlEncode: function (html) {
+        //1.首先动态创建一个容器标签元素，如DIV
+        var temp = document.createElement("div");
+        //2.然后将要转换的字符串设置为这个元素的innerText(ie支持)或者textContent(火狐，google支持)
+        (temp.textContent != undefined) ? (temp.textContent = html) : (temp.innerText = html);
+        //3.最后返回这个元素的innerHTML，即得到经过HTML编码转换的字符串了
+        var output = temp.innerHTML;
+        temp = null;
+        return output;
+    },
+    /*2.用浏览器内部转换器实现html解码*/
+    htmlDecode: function (text) {
+        //1.首先动态创建一个容器标签元素，如DIV
+        var temp = document.createElement("div");
+        //2.然后将要转换的字符串设置为这个元素的innerHTML(ie，火狐，google都支持)
+        temp.innerHTML = text;
+        //3.最后返回这个元素的innerText(ie支持)或者textContent(火狐，google支持)，即得到经过HTML解码的字符串了。
+        var output = temp.innerText || temp.textContent;
+        temp = null;
+        return output;
+    }
+};
+
 // Prepare data
-var data = JSON.parse(document.getElementById('graphdata').innerHTML);
+var innerHTMLStr = document.getElementById('graphdata').innerHTML;
+
+//alert(innerHTMLStr);
+
+innerHTMLStr = HtmlUtil.htmlDecode(innerHTMLStr);
+
+//alert(innerHTMLStr);
+var graphData = JSON.parse(innerHTMLStr);
 
 /*
  * Reference Doc : 
  * 1. https://ithelp.ithome.com.tw/articles/10197211
 */
-function draw(data) {
+function draw() {
+    var data = graphData;
+
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var gn = url.searchParams.get("gn");
+
+    if (gn != undefined) {
+        var temData = data.nodes;
+        var newData = [];
+
+        $.each(temData, function (index, node) {
+            if (node.group.indexOf(gn.substring(0,1)) != -1) {
+                newData.push(node);
+            }
+        }); 
+
+        data.nodes = newData;
+    }
 
     var link = svg.append("g")
         .attr("class", "links")
@@ -48,6 +98,10 @@ function draw(data) {
                 displaytext += "-" + d.group;
             }
 
+            if (d.newproducts > 0) {
+                displaytext += " (" + d.newproducts + "本月新品 )";
+            }
+
             if (d.buy > 0) {
                 displaytext += " 買" + d.buy + "次";
             }
@@ -61,11 +115,19 @@ function draw(data) {
         .attr('x', 6)
         .attr('y', 3)
         .on("click", function (d) {
-            //alert(d.name)
-            window.open(
-                '/un/' + d.name,
-                '_blank' // <- This is what makes it open in a new window.
-            );
+
+            if (d.newproducts != 0) {
+                window.open(
+                    '/ui/' + d.id,
+                    '_blank' // <- This is what makes it open in a new window.
+                );
+            }
+            else {
+                window.open(
+                    'https://www.facebook.com/search/top/?q=' + d.name+'&epa=SEARCH_BOX' ,
+                    '_blank' // <- This is what makes it open in a new window.
+                );
+            }
         });
 
     node.append("title")
@@ -112,4 +174,4 @@ function dragended(d) {
 }
 
 // draw
-draw(data);
+draw();

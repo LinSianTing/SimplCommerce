@@ -78,6 +78,7 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
             return PartialView(model);
         }
 
+        [HttpGet("pi/{id}")]
         public async Task<IActionResult> ProductDetail(long id)
         {
             var product = _productRepository.Query()
