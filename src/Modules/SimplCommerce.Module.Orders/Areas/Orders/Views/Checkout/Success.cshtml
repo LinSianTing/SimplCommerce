@@ -4,6 +4,6 @@
     ViewBag.Title = "Result";
 }
 
-<h2>Congratulation!</h2>
-<p><a href="~/user/orders/@Model">Your order</a> has been received. Thank you</p>
+    <h2>@Localizer["Your order have been sent"]</h2>
+    <p>@Localizer["we will handle this order soon"]<a href="~/user/orders/@Model">@Localizer["order detail"]</a></p>
 
