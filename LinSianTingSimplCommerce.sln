@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{0A
 		src\Database\StaticData-VN.sql = src\Database\StaticData-VN.sql
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimplCommerce.WebHost", "src\SimplCommerce.WebHost\SimplCommerce.WebHost.csproj", "{13367B7A-E91C-47EE-BA5E-C50664D65767}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheWorldStep.WebHost", "src\SimplCommerce.WebHost\TheWorldStep.WebHost.csproj", "{13367B7A-E91C-47EE-BA5E-C50664D65767}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimplCommerce.Infrastructure", "src\SimplCommerce.Infrastructure\SimplCommerce.Infrastructure.csproj", "{9C156841-9389-4840-82CB-D5A4ED9A6A00}"
 EndProject
