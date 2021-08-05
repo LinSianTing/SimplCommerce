@@ -8,14 +8,17 @@ using SimplCommerce.Infrastructure.Data;
 using SimplCommerce.Infrastructure;
 using SimplCommerce.Module.Core.Models;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace SimplCommerce.Module.Core.Extensions
 {
     public class WorkContext : IWorkContext
     {
+        private const string SystemAppSectionName = "SystemApp";
         private const string UserGuidCookiesName = "SimplUserGuid";
         private const long GuestRoleId = 3;
 
+        private SystemApp _currentSystemApp;
         private User _currentUser;
         private UserManager<User> _userManager;
         private HttpContext _httpContext;
@@ -31,6 +34,126 @@ namespace SimplCommerce.Module.Core.Extensions
             _httpContext = contextAccessor.HttpContext;
             _userRepository = userRepository;
             _configuration = configuration;
+        }
+
+        /// <summary>
+        /// Add By Eric Lin
+        /// </summary>
+        /// <returns></returns>
+        public SystemApp GetCurrentSystemAppSync()
+        {
+            if (_currentSystemApp != null)
+            {
+                return _currentSystemApp;
+            }
+
+            int id = 0;
+            var idObject = _configuration.GetSection(@SystemAppSectionName + ":" + "Id").Value;
+            if (!int.TryParse(idObject, out id))
+            {
+                return null;
+            }
+            string name = _configuration.GetSection(@SystemAppSectionName + ":" + "Name").Value;
+            string description = _configuration.GetSection(@SystemAppSectionName + ":" + "Description").Value;
+
+            bool enableSystemIdCross = false;
+            var enableSystemIdCrossObject = _configuration.GetSection(@SystemAppSectionName + ":" + "EnableSystemIdCross").Value;
+            if (!bool.TryParse(enableSystemIdCrossObject, out enableSystemIdCross))
+            {
+
+            }
+
+            List<int> IdCrossList = null;
+            string systemIdCrossListstring = _configuration.GetSection(@SystemAppSectionName + ":" + "SystemIdCross").Value;
+            if (!string.IsNullOrEmpty(systemIdCrossListstring))
+            {
+                string[] systemIdCrossArray = systemIdCrossListstring.Split(',');
+
+                if (systemIdCrossArray.Length != 0)
+                {
+                    IdCrossList = new List<int>();
+                    for (int i = 0; i <= systemIdCrossArray.Length - 1; i++)
+                    {
+                        Int16 idCross = 0;
+                        var idCrossObject = systemIdCrossArray[i];
+                        if (Int16.TryParse(idCrossObject, out idCross))
+                        {
+                            IdCrossList.Add(idCross);
+                        }
+                    }
+                }
+            }
+
+            var versionStageObject = _configuration.GetSection(@SystemAppSectionName + ":" + "VersionStage").Value;
+            VersionStageType versionStage = VersionStageType.Develop;
+            if (!VersionStageType.TryParse(versionStageObject, out versionStage))
+            {
+
+            }
+
+            _currentSystemApp = new SystemApp(id, name, description, enableSystemIdCross, IdCrossList, versionStage);
+
+            return _currentSystemApp;
+        }
+
+        /// <summary>
+        /// Add By Eric Lin
+        /// </summary>
+        /// <returns></returns>
+        public async Task<SystemApp> GetCurrentSystemApp()
+        {
+            if (_currentSystemApp != null)
+            {
+                return _currentSystemApp;
+            }
+
+            int id = 0;
+            var idObject = _configuration.GetSection(@SystemAppSectionName + ":" + "Id").Value;
+            if (!int.TryParse(idObject, out id))
+            {
+                return null;
+            }
+            string name = _configuration.GetSection(@SystemAppSectionName + ":" + "Name").Value;
+            string description = _configuration.GetSection(@SystemAppSectionName + ":" + "Description").Value;
+
+            bool enableSystemIdCross = false;
+            var enableSystemIdCrossObject = _configuration.GetSection(@SystemAppSectionName + ":" + "EnableSystemIdCross").Value;
+            if (!bool.TryParse(enableSystemIdCrossObject, out enableSystemIdCross))
+            {
+
+            }
+
+            List<int> IdCrossList = null;
+            string systemIdCrossListstring = _configuration.GetSection(@SystemAppSectionName + ":" + "SystemIdCross").Value;
+            if (!string.IsNullOrEmpty(systemIdCrossListstring))
+            {
+                string[] systemIdCrossArray = systemIdCrossListstring.Split(',');
+
+                if (systemIdCrossArray.Length != 0)
+                {
+                    IdCrossList = new List<int>();
+                    for (int i = 0; i <= systemIdCrossArray.Length - 1; i++)
+                    {
+                        Int16 idCross = 0;
+                        var idCrossObject = systemIdCrossArray[i];
+                        if (Int16.TryParse(idCrossObject, out idCross))
+                        {
+                            IdCrossList.Add(idCross);
+                        }
+                    }
+                }
+            }
+
+            var versionStageObject = _configuration.GetSection(@SystemAppSectionName + ":" + "VersionStage").Value;
+            VersionStageType versionStage = VersionStageType.Develop;
+            if (!VersionStageType.TryParse(versionStageObject, out versionStage))
+            {
+
+            }
+
+            _currentSystemApp = new SystemApp(id, name, description, enableSystemIdCross, IdCrossList, versionStage);
+
+            return _currentSystemApp;
         }
 
         public async Task<User> GetCurrentUser()
@@ -69,9 +192,9 @@ namespace SimplCommerce.Module.Core.Extensions
                 UserName = dummyEmail,
                 Culture = _configuration.GetValue<string>("Global.DefaultCultureUI") ?? GlobalConfiguration.DefaultCulture
             };
-            var abc = await _userManager.CreateAsync(_currentUser, "1qazZAQ!");
+            var abc = await _userManager.CreateAsync(_currentUser, "123456");
             await _userManager.AddToRoleAsync(_currentUser, "guest");
-            SetUserGuidCookies();
+            SetUserGuidCookies(_currentUser.UserGuid);
             return _currentUser;
         }
 
@@ -85,14 +208,14 @@ namespace SimplCommerce.Module.Core.Extensions
             return null;
         }
 
-        private void SetUserGuidCookies()
+        private void SetUserGuidCookies(Guid userGuid)
         {
             _httpContext.Response.Cookies.Append(UserGuidCookiesName, _currentUser.UserGuid.ToString(), new CookieOptions
             {
                 Expires = DateTime.UtcNow.AddYears(5),
                 HttpOnly = true,
-                IsEssential = true,
-                SameSite = SameSiteMode.Strict
+                SameSite = SameSiteMode.Strict,
+                IsEssential = true
             });
         }
     }
