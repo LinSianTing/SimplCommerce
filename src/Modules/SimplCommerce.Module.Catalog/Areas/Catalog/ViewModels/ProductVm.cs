@@ -33,6 +33,8 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.ViewModels
         [Required(ErrorMessage = "The {0} field is required.")]
         public string Name { get; set; }
 
+        public int SystemId { get; set; }
+
         [Required(ErrorMessage = "The {0} field is required.")]
         public string Slug { get; set; }
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
+using SimplCommerce.Infrastructure;
 using SimplCommerce.Infrastructure.Data;
 using SimplCommerce.Infrastructure.Helpers;
 using SimplCommerce.Infrastructure.Web.SmartTable;
@@ -61,34 +62,59 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
         [HttpGet("quick-search")]
         public async Task<IActionResult> QuickSearch(string name)
         {
-            var query = _productRepository.Query()
-                .Where(x => !x.IsDeleted && !x.HasOptions && x.IsAllowToOrder);
+            var currentSystemApp = await _workContext.GetCurrentSystemApp();
+            var currentUser = await _workContext.GetCurrentUser();
+
+            IQueryable<Product> query = null;
+            if (currentSystemApp.EnableSystemIdCross)
+            {
+                query = _productRepository.Query().Where(x => !x.IsDeleted && currentSystemApp.IdCrossList.Contains((int)x.SystemId));
+            }
+            else
+            {
+                query = _productRepository.Query().Where(x => !x.IsDeleted && x.SystemId == currentSystemApp.Id);
+            }
 
             if (!string.IsNullOrWhiteSpace(name))
             {
                 query = query.Where(x => x.Name.Contains(name));
             }
 
-            var products = await query.Take(5).Select(x => new
+            var Products = await query.Take(5).Select(x => new
             {
                 x.Id,
                 x.Name
             }).ToListAsync();
 
-            return Ok(products);
+            return Ok(Products);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var product = _productRepository.Query()
-                .Include(x => x.ThumbnailImage)
-                .Include(x => x.Medias).ThenInclude(m => m.Media)
-                .Include(x => x.ProductLinks).ThenInclude(p => p.LinkedProduct).ThenInclude(m => m.ThumbnailImage)
-                .Include(x => x.OptionValues).ThenInclude(o => o.Option)
-                .Include(x => x.AttributeValues).ThenInclude(a => a.Attribute).ThenInclude(g => g.Group)
-                .Include(x => x.Categories)
-                .FirstOrDefault(x => x.Id == id);
+            var currentSystemApp = await _workContext.GetCurrentSystemApp();
+
+            Product product = null;
+            if (currentSystemApp.EnableSystemIdCross)
+            {
+                product = _productRepository.Query()
+               .Include(x => x.ThumbnailImage)
+               .Include(x => x.Medias).ThenInclude(m => m.Media)
+               .Include(x => x.ProductLinks).ThenInclude(p => p.LinkedProduct).ThenInclude(m => m.ThumbnailImage)
+               .Include(x => x.AttributeValues).ThenInclude(a => a.Attribute).ThenInclude(g => g.Group)
+               .Include(x => x.Categories)
+               .FirstOrDefault(x => x.Id == id && currentSystemApp.IdCrossList.Contains((int)x.SystemId));
+            }
+            else
+            {
+                product = _productRepository.Query()
+               .Include(x => x.ThumbnailImage)
+               .Include(x => x.Medias).ThenInclude(m => m.Media)
+               .Include(x => x.ProductLinks).ThenInclude(p => p.LinkedProduct).ThenInclude(m => m.ThumbnailImage)
+               .Include(x => x.AttributeValues).ThenInclude(a => a.Attribute).ThenInclude(g => g.Group)
+               .Include(x => x.Categories)
+               .FirstOrDefault(x => x.Id == id && x.SystemId == currentSystemApp.Id);
+            }
 
             var currentUser = await _workContext.GetCurrentUser();
             if (!User.IsInRole("admin") && product.VendorId != currentUser.VendorId)
@@ -212,11 +238,23 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
         [HttpPost("grid")]
         public async Task<IActionResult> List([FromBody] SmartTableParam param)
         {
-            var query = _productRepository.Query().Where(x => !x.IsDeleted);
+            var currentSystemApp = await _workContext.GetCurrentSystemApp();
             var currentUser = await _workContext.GetCurrentUser();
-            if (!User.IsInRole("admin"))
+
+            IQueryable<Product> query = null;
+            if (currentSystemApp.EnableSystemIdCross)
             {
-                query = query.Where(x => x.VendorId == currentUser.VendorId);
+                query = _productRepository
+                    .Query()
+                    .Include(x => x.Categories).ThenInclude(a => a.Category)
+                    .Where(x => !x.IsDeleted && currentSystemApp.IdCrossList.Contains((int)x.SystemId));
+            }
+            else
+            {
+                query = _productRepository
+                    .Query()
+                    .Include(x => x.Categories).ThenInclude(a => a.Category)
+                    .Where(x => !x.IsDeleted && x.SystemId == currentSystemApp.Id);
             }
 
             if (param.Search.PredicateObject != null)
@@ -226,6 +264,12 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
                 {
                     string name = search.Name;
                     query = query.Where(x => x.Name.Contains(name));
+                }
+
+                if (search.SystemId != null)
+                {
+                    int systemId = search.SystemId;
+                    query = query.Where(x => x.SystemId == 0 | x.SystemId == systemId);
                 }
 
                 if (search.HasOptions != null)
@@ -267,6 +311,7 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
                 x => new ProductListItem
                 {
                     Id = x.Id,
+                    SystemId = x.SystemId,
                     Name = x.Name,
                     HasOptions = x.HasOptions,
                     IsVisibleIndividually = x.IsVisibleIndividually,
@@ -291,10 +336,12 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
                 return BadRequest(ModelState);
             }
 
+            var currentSystemApp = await _workContext.GetCurrentSystemApp();
             var currentUser = await _workContext.GetCurrentUser();
 
             var product = new Product
             {
+                SystemId = currentSystemApp.Id,
                 Name = model.Product.Name,
                 Slug = model.Product.Slug,
                 MetaTitle = model.Product.MetaTitle,
@@ -384,16 +431,30 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
                 return BadRequest(ModelState);
             }
 
-            var product = _productRepository.Query()
-                .Include(x => x.ThumbnailImage)
-                .Include(x => x.Medias).ThenInclude(m => m.Media)
-                .Include(x => x.ProductLinks).ThenInclude(x => x.LinkedProduct).ThenInclude(p => p.ThumbnailImage)
-                .Include(x => x.OptionValues).ThenInclude(o => o.Option)
-                .Include(x => x.AttributeValues).ThenInclude(a => a.Attribute).ThenInclude(g => g.Group)
-                .Include(x => x.Categories)
-                .FirstOrDefault(x => x.Id == id);
+            var currentSystemApp = await _workContext.GetCurrentSystemApp();
+            Product product = null;
+            if (currentSystemApp.EnableSystemIdCross)
+            {
+                product = _productRepository.Query()
+                                 .Include(x => x.ThumbnailImage)
+                                 .Include(x => x.Medias).ThenInclude(m => m.Media)
+                                 .Include(x => x.ProductLinks).ThenInclude(x => x.LinkedProduct).ThenInclude(p => p.ThumbnailImage)
+                                 .Include(x => x.AttributeValues).ThenInclude(a => a.Attribute).ThenInclude(g => g.Group)
+                                 .Include(x => x.Categories)
+               .FirstOrDefault(x => x.Id == id && currentSystemApp.IdCrossList.Contains((int)x.SystemId));
+            }
+            else
+            {
+                product = _productRepository.Query()
+                                .Include(x => x.ThumbnailImage)
+                                .Include(x => x.Medias).ThenInclude(m => m.Media)
+                                .Include(x => x.ProductLinks).ThenInclude(x => x.LinkedProduct).ThenInclude(p => p.ThumbnailImage)
+                                .Include(x => x.AttributeValues).ThenInclude(a => a.Attribute).ThenInclude(g => g.Group)
+                                .Include(x => x.Categories)
+               .FirstOrDefault(x => x.Id == id && x.SystemId == currentSystemApp.Id);
+            }
 
-            if(product == null)
+            if (product == null)
             {
                 return NotFound();
             }

@@ -11,7 +11,14 @@ using SimplCommerce.Module.Catalog.Models;
 using SimplCommerce.Module.Catalog.Services;
 using SimplCommerce.Module.Core.Areas.Core.ViewModels;
 using SimplCommerce.Module.Core.Events;
+using SimplCommerce.Module.Core.Extensions;
 using SimplCommerce.Module.Core.Services;
+using System.Text.RegularExpressions;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Drawing.Imaging;
+using System.Text;
 
 namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
 {
@@ -20,33 +27,51 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
     public class ProductController : Controller
     {
         private readonly IMediaService _mediaService;
-        private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<Models.Product> _productRepository;
         private readonly IMediator _mediator;
         private readonly IProductPricingService _productPricingService;
         private readonly IContentLocalizationService _contentLocalizationService;
+        private readonly IWorkContext _workContext;
 
-        public ProductController(IRepository<Product> productRepository,
-            IMediaService mediaService,
-            IMediator mediator,
-            IProductPricingService productPricingService,
-            IContentLocalizationService contentLocalizationService)
+        public ProductController(IRepository<Models.Product> productRepository,
+        IMediaService mediaService,
+        IMediator mediator,
+        IProductPricingService productPricingService,
+        IContentLocalizationService contentLocalizationService,
+        IWorkContext workContext)
         {
             _productRepository = productRepository;
             _mediaService = mediaService;
             _mediator = mediator;
             _productPricingService = productPricingService;
             _contentLocalizationService = contentLocalizationService;
+            _workContext = workContext;
         }
 
         [HttpGet("product/product-overview")]
         public async Task<IActionResult> ProductOverview(long id)
         {
-            var product = await _productRepository.Query()
-                .Include(x => x.OptionValues)
-                .Include(x => x.ProductLinks).ThenInclude(p => p.LinkedProduct)
-                .Include(x => x.ThumbnailImage)
-                .Include(x => x.Medias).ThenInclude(m => m.Media)
-                .FirstOrDefaultAsync(x => x.Id == id && x.IsPublished);
+            var currentSystemApp = await _workContext.GetCurrentSystemApp();
+
+            Models.Product product = null;
+            if (currentSystemApp.EnableSystemIdCross)
+            {
+                product = await _productRepository.Query()
+                                .Include(x => x.ProductLinks).ThenInclude(p => p.LinkedProduct)
+                                .Include(x => x.ThumbnailImage)
+                                .Include(x => x.Medias).ThenInclude(m => m.Media)
+                                .Include(x => x.Categories).ThenInclude(a => a.Category)
+                                .FirstOrDefaultAsync(x => x.Id == id && x.IsPublished && currentSystemApp.IdCrossList.Contains((int)x.SystemId));
+            }
+            else
+            {
+                product = await _productRepository.Query()
+                                .Include(x => x.ProductLinks).ThenInclude(p => p.LinkedProduct)
+                                .Include(x => x.ThumbnailImage)
+                                .Include(x => x.Medias).ThenInclude(m => m.Media)
+                                .Include(x => x.Categories).ThenInclude(a => a.Category)
+                                .FirstOrDefaultAsync(x => x.Id == id && x.IsPublished && x.SystemId == currentSystemApp.Id);
+            }
 
             if (product == null)
             {
@@ -76,15 +101,16 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
 
         public async Task<IActionResult> ProductDetail(long id)
         {
-            var product = _productRepository.Query()
-                .Include(x => x.OptionValues)
+            var currentSystemApp = await _workContext.GetCurrentSystemApp();
+            var currentUser = await _workContext.GetCurrentUser();
+
+            Product product = _productRepository.Query()
                 .Include(x => x.Categories).ThenInclude(c => c.Category)
                 .Include(x => x.AttributeValues).ThenInclude(a => a.Attribute)
                 .Include(x => x.ProductLinks).ThenInclude(p => p.LinkedProduct).ThenInclude(m => m.ThumbnailImage)
                 .Include(x => x.ThumbnailImage)
                 .Include(x => x.Medias).ThenInclude(m => m.Media)
-                .Include(x => x.Brand)
-                .FirstOrDefault(x => x.Id == id && x.IsPublished);
+                .FirstOrDefault(x => x.Id == id);
             if (product == null)
             {
                 return NotFound();
@@ -149,7 +175,7 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.Controllers
 
         private void MapProductVariantToProductVm(Product product, ProductDetail model)
         {
-            if(!product.ProductLinks.Any(x => x.LinkType == ProductLinkType.Super))
+            if (!product.ProductLinks.Any(x => x.LinkType == ProductLinkType.Super))
             {
                 return;
             }

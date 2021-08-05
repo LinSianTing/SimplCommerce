@@ -8,6 +8,8 @@ namespace SimplCommerce.Module.Catalog.Areas.Catalog.ViewModels
 
         public string Name { get; set; }
 
+        public int? SystemId { get; set; }
+
         public bool HasOptions { get; set; }
 
         public bool IsVisibleIndividually { get; set; }
